@@ -22,9 +22,9 @@ Dashboard audit aset Roblox berperforma tinggi yang dirancang khusus untuk trade
 - **Charts**: ApexCharts
 - **APIs**: Roblox Web APIs, Rolimons Item API
 
-## 📦 Instalasi Lokal
+## 📦 Instalasi
 
-Jika Anda ingin menjalankan project ini di komputer Anda sendiri:
+Cara Install:
 
 1. **Clone Repository**
 
