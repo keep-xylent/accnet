@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Framework-Flask-black?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![License](https://img.shields.io/badge/License-Educational-green)
 
 Dashboard audit aset Roblox berperforma tinggi yang dirancang khusus untuk trader **Limited**. Dapatkan analisis kekayaan bersih (Networth) secara instan dengan metrik pasar real-time.
 
