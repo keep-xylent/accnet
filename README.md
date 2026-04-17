@@ -1,9 +1,9 @@
 # accnet. | Advanced Roblox Asset Audit ◈
-
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Framework-Flask-black?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/xylent/accnet)
+![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-Framework-000000?style=for-the-badge&logo=flask&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT%20(Educational)-8A2BE2?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
+![Hugging Face](https://img.shields.io/badge/HuggingFace-Spaces-FFCC4D?style=for-the-badge&logo=huggingface&logoColor=black)
+![Repo Size](https://img.shields.io/github/repo-size/keep-xylent/accnet.?style=for-the-badge)
 
 **[🚀 Dashboard](https://xylent-accnet.hf.space/)**
 
