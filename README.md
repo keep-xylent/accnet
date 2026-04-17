@@ -2,9 +2,14 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Framework-Flask-black?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-![License](https://img.shields.io/badge/License-Educational-green)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/xylent/accnet)
+
+**[🚀 Dashboard](https://xylent-accnet.hf.space/)**
 
 Dashboard audit aset Roblox berperforma tinggi yang dirancang khusus untuk trader **Limited**. Dapatkan analisis kekayaan bersih (Networth) secara instan dengan metrik pasar real-time.
+
+![Dashboard Preview](https://via.placeholder.com/800x400?text=accnet.+Advanced+Asset+Audit+Preview)
 
 ## 🚀 Fitur Utama
 
@@ -22,15 +27,15 @@ Dashboard audit aset Roblox berperforma tinggi yang dirancang khusus untuk trade
 - **Charts**: ApexCharts
 - **APIs**: Roblox Web APIs, Rolimons Item API
 
-## 📦 Instalasi
+## 📦 Instalasi Lokal
 
-Cara Install:
+Jika Anda ingin menjalankan project ini di komputer Anda sendiri:
 
 1. **Clone Repository**
 
    ```bash
-   git clone https://github.com/username/roblox-audit.git
-   cd roblox-audit
+   git clone https://github.com/keep-xylent/accnet..git
+   cd accnet.
    ```
 
 2. **Instal Dependensi**
