@@ -63,16 +63,16 @@ Jika Anda ingin menjalankan proyek ini di komputer Anda secara lokal:
    ```
 
 2. **Instal Dependensi**
-   Pastikan Python sudah terinstal di sistem Anda.
+   Pastikan Node.js sudah terinstal di sistem Anda.
    ```bash
-   pip install -r requirements.txt
+   npm install -g wrangler
    ```
 
-3. **Jalankan Aplikasi**
+3. **Jalankan Aplikasi Lokal**
    ```bash
-   python app.py
+   npx wrangler pages dev public
    ```
-   Aplikasi akan dapat diakses secara lokal melalui `http://localhost:5000`.
+   Aplikasi akan dapat diakses secara lokal melalui `http://localhost:8788`.
 
 ---
 
