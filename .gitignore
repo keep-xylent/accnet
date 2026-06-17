@@ -1,21 +1,18 @@
-# Python Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# Cloudflare Pages / Wrangler
+.wrangler/
+dist/
+build/
+.cache/
 
-# Environments
-.venv
-venv/
-ENV/
-env.bak/
-venv.bak/
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Environment variables
 .env
-
-# Flask stuff
-instance/
-.webassets-cache
+.dev.vars
 
 # OS stuff
 .DS_Store
