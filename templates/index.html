@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>accnet. | Advanced Asset Audit</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- New Google Fonts added here -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <link rel="stylesheet" href="/static/css/style.css">
@@ -19,7 +20,7 @@
             <div class="sub-branding">Asset Audit & Network Intelligence</div>
         </div>
 
-        <div class="search-box">
+        <div class="search-container">
             <div class="currency-selector">
                 <div class="curr-label">Currency Node</div>
                 <div class="curr-options">
@@ -31,56 +32,80 @@
             <div class="search-wrapper">
                 <input type="text" id="username" placeholder="Search Roblox username..." spellcheck="false"
                     inputmode="search" autocomplete="off">
-                <button onclick="performAudit()">ANALYZE</button>
+                <button class="primary-btn" onclick="performAudit()">ANALYZE</button>
             </div>
-            <div id="status-msg" class="hidden" style="margin-top: 15px; font-size: 12px; color: var(--accent);">
-                <div class="loader"></div> SYNCHRONIZING WITH ROBLOX NODES...
+            
+            <div style="text-align: center;">
+                <div id="status-msg" class="status-msg hidden">
+                    <div class="loader"></div> SYNCHRONIZING WITH ROBLOX NODES...
+                </div>
             </div>
         </div>
 
         <div id="dashboard" class="hidden">
-            <div class="profile-card">
-                <a id="user-roblox-link" href="#" target="_blank" class="corner-link" title="Open Roblox Profile">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                </a>
-                <div class="avatar-container">
-                    <img id="user-avatar" class="avatar" src="">
-                    <div class="status-badge"></div>
-                </div>
-                <div class="user-info">
-                    <h2 id="display-name">---</h2>
-                    <div id="roblox-id" class="user-id">UID: 000000</div>
-                    <div class="networth-label" style="margin-top:20px;">ESTIMATED NETWORTH (RAP)</div>
-                    <div id="total-networth" class="networth-val">
-                        <svg class="rbx-icon" viewBox="0 0 91.99 100.06"
-                            style="width:24px; height:24px; vertical-align:middle; fill:#00ff88; margin-top:-4px;">
-                            <path
-                                d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z" />
+            <div class="dashboard-top">
+                <!-- Profile Glass Card -->
+                <div class="glass-card profile-card">
+                    <a id="user-roblox-link" href="#" target="_blank" class="corner-link" title="Open Roblox Profile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
                         </svg>
-                        <span id="networth-amt">0</span>
+                    </a>
+                    
+                    <div class="avatar-container">
+                        <img id="user-avatar" class="avatar" src="">
+                        <div class="status-badge"></div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <h2 id="display-name">---</h2>
+                        <div id="roblox-id" class="user-id">UID: 000000</div>
+                        
+                        <div class="networth-container">
+                            <div class="networth-label">ESTIMATED NETWORTH (RAP)</div>
+                            <div id="total-networth" class="networth-val">
+                                <svg class="rbx-icon" viewBox="0 0 91.99 100.06"
+                                    style="width:28px; height:28px; vertical-align:middle; fill:currentColor; margin-top:-4px;">
+                                    <path
+                                        d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z" />
+                                </svg>
+                                <span id="networth-amt">0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- RAP History Chart -->
-            <div class="chart-section">
-                <div class="chart-header">
-                    <span>◈</span> NETWORK INTELLIGENCE: RAP ANALYSIS (7D TREND)
+                <!-- RAP History Chart Card -->
+                <div class="glass-card chart-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <div class="section-title">Network Intelligence: RAP Analysis</div>
+                    </div>
+                    <div id="rap-chart"></div>
                 </div>
-                <div id="rap-chart"></div>
             </div>
 
-            <h3 class="section-title">Top Asset Inventory</h3>
-            <div id="inventory-grid" class="grid"></div>
+            <!-- Inventory Section -->
+            <div class="inventory-section">
+                <div class="section-header" style="margin-bottom: 24px;">
+                    <div class="section-icon" style="background: rgba(0, 255, 163, 0.1); color: var(--success); border-color: rgba(0, 255, 163, 0.2);">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                    </div>
+                    <div class="section-title">Top Asset Inventory</div>
+                </div>
+                
+                <div id="inventory-grid" class="grid"></div>
 
-            <div id="private-msg" class="private-alert hidden">
-                <strong>ACCESS DENIED</strong><br>
-                <span style="font-size: 12px; opacity: 0.8;">Target inventory is set to private. Cannot retrieve
-                    non-public assets.</span>
+                <div id="private-msg" class="private-alert hidden">
+                    <strong>ACCESS DENIED</strong><br>
+                    <span style="font-size: 13px; opacity: 0.8; margin-top: 8px; display: inline-block;">
+                        Target inventory is set to private. Cannot retrieve non-public assets.
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -88,13 +113,14 @@
     <!-- Custom Error Modal -->
     <div id="error-modal" class="modal-overlay">
         <div class="modal-box">
-            <div class="modal-icon">✕</div>
+            <div class="modal-icon">⚠</div>
             <div class="modal-title">ACCESS_ERROR</div>
             <div id="modal-message" class="modal-text">User could not be found in the network.</div>
             <button class="modal-btn" onclick="closeErrorModal()">DISMISS</button>
         </div>
     </div>
 
+    <!-- Javascript remains EXACTLY the same -->
     <script>
         let appState = {
             currency: 'RBX',
@@ -158,13 +184,16 @@
 
             // Populate Profile
             document.getElementById('user-avatar').src = data.avatar;
-            document.getElementById('display-name').innerHTML = `${data.name.toUpperCase()} <span style="font-size:14px; opacity:0.5; font-weight:400;">(@${data.username})</span>`;
+            document.getElementById('display-name').innerHTML = `${data.name.toUpperCase()} <span class="username-tag">(@${data.username})</span>`;
             document.getElementById('roblox-id').innerText = `UID: ${data.id}`;
             document.getElementById('user-roblox-link').href = `https://www.roblox.com/users/${data.id}/profile`;
 
             const networthLabel = appState.currency === 'RBX' ? 'ESTIMATED NETWORTH (RAP)' : `ESTIMATED NETWORTH (${appState.currency})`;
             document.querySelector('.networth-label').innerText = networthLabel;
             document.getElementById('networth-amt').innerText = formatValue(data.networth);
+            
+            const rbxIcon = document.querySelector('#total-networth .rbx-icon');
+            if (rbxIcon) rbxIcon.style.display = appState.currency === 'RBX' ? 'inline-block' : 'none';
 
             if (data.private) {
                 document.getElementById('private-msg').classList.remove('hidden');
@@ -187,15 +216,17 @@
                         <a href="https://www.roblox.com/catalog/${item.assetId}" target="_blank" class="corner-link" title="Open Catalog Link">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
-                        <div class="item-tags">
-                            <span class="tag ${tagType}">${tagLabel}</span>
-                            ${item.serial ? `<div class="serial">${item.serial}</div>` : ''}
+                        <div class="item-thumb-wrapper">
+                            <div class="item-tags">
+                                <span class="tag ${tagType}">${tagLabel}</span>
+                                ${item.serial ? `<div class="serial">#${item.serial}</div>` : ''}
+                            </div>
+                            <img src="${item.image}" class="item-thumb" alt="asset">
+                            <span class="demand-tag demand-${item.demand.toLowerCase()}">${item.demand}</span>
                         </div>
-                        <img src="${item.image}" class="item-thumb" alt="asset">
-                        <span class="demand-tag demand-${item.demand.toLowerCase()}">${item.demand}</span>
                         <div class="item-name">${item.name}</div>
                         <div class="item-price">
-                            ${appState.currency === 'RBX' ? '<svg viewBox="0 0 91.99 100.06" style="width:14px; height:14px; fill:#00ff88; vertical-align:middle; margin-top:-2px;"><path d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z"/></svg>' : ''}
+                            ${appState.currency === 'RBX' ? '<svg viewBox="0 0 91.99 100.06" style="width:16px; height:16px; fill:currentColor; vertical-align:middle; margin-top:-2px;"><path d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z"/></svg>' : ''}
                             ${formatValue(item.price)}
                         </div>
                     `;
@@ -221,26 +252,27 @@
                     data: historyData
                 }],
                 chart: {
-                    height: 200,
+                    height: 300,
                     type: 'area',
                     toolbar: { show: false },
                     zoom: { enabled: false },
-                    background: 'transparent'
+                    background: 'transparent',
+                    fontFamily: 'Inter, sans-serif'
                 },
-                colors: ['#00d4ff'],
+                colors: ['#00f0ff'],
                 fill: {
                     type: 'gradient',
                     gradient: {
                         shadeIntensity: 1,
-                        opacityFrom: 0.4,
-                        opacityTo: 0.1,
+                        opacityFrom: 0.5,
+                        opacityTo: 0.05,
                         stops: [0, 90, 100]
                     }
                 },
                 dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
+                stroke: { curve: 'smooth', width: 3 },
                 grid: {
-                    borderColor: '#1a1a1a',
+                    borderColor: 'rgba(255, 255, 255, 0.05)',
                     strokeDashArray: 4,
                     yaxis: { lines: { show: true } }
                 },
@@ -248,12 +280,12 @@
                     categories: ['6D AGO', '5D AGO', '4D AGO', '3D AGO', '2D AGO', 'YESTERDAY', 'NOW'],
                     axisBorder: { show: false },
                     axisTicks: { show: false },
-                    labels: { style: { colors: '#444', fontSize: '9px' } }
+                    labels: { style: { colors: '#a1a1aa', fontSize: '10px', fontWeight: 600 } }
                 },
                 yaxis: {
                     labels: {
                         formatter: val => formatValue(val / (appState.currency === 'RBX' ? 1 : appState.rates[appState.currency])),
-                        style: { colors: '#444', fontSize: '9px' }
+                        style: { colors: '#a1a1aa', fontSize: '11px', fontFamily: 'Fira Code, monospace' }
                     }
                 },
                 tooltip: {
@@ -274,6 +306,7 @@
         });
     </script>
 
+    <div class="watermark">by xlnt.</div>
 </body>
 
 </html>

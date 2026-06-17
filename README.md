@@ -37,24 +37,41 @@
 - **<img src="https://api.iconify.design/lucide:zap.svg?color=%23ffea00" width="20" height="20" align="absmiddle"> High Performance**
   Memanfaatkan sistem *batch API* untuk memastikan sinkronisasi data yang cepat, memuat keseluruhan inventaris dalam waktu kurang dari 2 detik.
 
+## 🛠️ Teknologi
+
+- **Backend**: Python, Flask
+- **Frontend**: Vanilla JS, CSS3 (Glassmorphism), HTML5
+- **Charts**: ApexCharts
+- **APIs**: Roblox Web APIs, Rolimons Item API
+
+## 📦 Instalasi Lokal
+
+Jika Anda ingin menjalankan project ini di komputer Anda sendiri:
+
+1. **Clone Repository**
+
+   ```bash
+   git clone https://github.com/keep-xylent/accnet..git
+   cd accnet.
+   ```
+
+2. **Instal Dependensi**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Jalankan Aplikasi**
+
+   ```bash
+   python app.py
+   ```
+
+   Aplikasi akan berjalan di `http://localhost:5000`.
+
+## 🛡️ Keamanan & Privasi
+
+- Aplikasi ini **tidak** memerlukan cookie atau password akun Roblox Anda.
+- Hanya menggunakan API publik untuk mengambil data inventory publik.
+
 ---
-
-## <img src="https://api.iconify.design/lucide:cpu.svg?color=%23ff00ff" width="24" height="24" align="absmiddle"> Teknologi
-
-Sistem ini dikembangkan menggunakan tumpukan teknologi modern untuk memastikan stabilitas dan performa terbaik:
-
-| Lapisan Sistem | Teknologi yang Digunakan |
-| :--- | :--- |
-| **Backend** | [![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/) [![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white)](https://flask.palletsprojects.com/) |
-| **Frontend** | [![JavaScript](https://img.shields.io/badge/Vanilla_JS-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS) [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML) |
-| **Visualisasi Data** | [![ApexCharts](https://img.shields.io/badge/ApexCharts-00E396?style=flat-square&logo=simpleanalytics&logoColor=white)](https://apexcharts.com/) |
-| **Integrasi API** | [![Roblox APIs](https://img.shields.io/badge/Roblox_Web_APIs-FFFFFF?style=flat-square&logo=roblox&logoColor=black)](https://create.roblox.com/) [![Rolimons API](https://img.shields.io/badge/Rolimons_Item_API-FF3333?style=flat-square&logo=json&logoColor=white)](https://www.rolimons.com/) |
-
----
-
-## <img src="https://api.iconify.design/lucide:shield-check.svg?color=%2300ff00" width="24" height="24" align="absmiddle"> Keamanan & Privasi
-
-> **Komitmen Transparansi** 
-> Keamanan Anda adalah prioritas utama. Aplikasi ini **tidak** akan pernah meminta, membutuhkan, ataupun menyimpan *cookie* dan kata sandi akun Roblox Anda. 
-> 
-> Seluruh proses penarikan data sepenuhnya aman karena hanya bergantung pada API publik resmi untuk membaca inventaris yang bersifat terbuka (*public inventory*).
