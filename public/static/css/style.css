@@ -429,7 +429,7 @@ button.primary-btn:active {
     aspect-ratio: 1/1;
     overflow: hidden;
     margin-bottom: 20px;
-    background: var(--bg-base);
+    background: #cbd5e1; /* Terang agar item hitam terlihat */
     border: 3px solid var(--border-strong);
 }
 
