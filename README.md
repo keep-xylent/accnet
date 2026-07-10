@@ -1,4 +1,4 @@
-<h1 align="center">accnet. | Account Value Checker</h1>
+<h1 align="center"> <img src="public/favicon.svg" alt="ACCNET Logo" width="120"> accnet. | Account Value Checker</h1>
 
 <div align="center">
 
