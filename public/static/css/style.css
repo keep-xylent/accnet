@@ -490,7 +490,7 @@ button.primary-btn:active {
     aspect-ratio: 1/1;
     overflow: hidden;
     margin-bottom: 20px;
-    background: #4A4A4A; /* Custom dark grey background */
+    background: #1e293b;
     border: 3px solid var(--border-strong);
 }
 
