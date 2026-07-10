@@ -52,30 +52,6 @@ Sistem ini dikembangkan menggunakan tumpukan teknologi modern untuk memastikan s
 
 ---
 
-## <img src="https://api.iconify.design/lucide:download-cloud.svg?color=%23ff9900" width="24" height="24" align="absmiddle"> Instalasi Lokal
-
-Jika Anda ingin menjalankan proyek ini di komputer Anda secara lokal:
-
-1. **Clone Repository**
-   ```bash
-   git clone https://github.com/keep-xylent/accnet..git
-   cd accnet.
-   ```
-
-2. **Instal Dependensi**
-   Pastikan Node.js sudah terinstal di sistem Anda.
-   ```bash
-   npm install -g wrangler
-   ```
-
-3. **Jalankan Aplikasi Lokal**
-   ```bash
-   npx wrangler pages dev public
-   ```
-   Aplikasi akan dapat diakses secara lokal melalui `http://localhost:8788`.
-
----
-
 ## <img src="https://api.iconify.design/lucide:shield-check.svg?color=%2300ff00" width="24" height="24" align="absmiddle"> Keamanan & Privasi
 
 > **Komitmen Transparansi** 
