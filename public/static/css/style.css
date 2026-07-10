@@ -56,8 +56,8 @@ body {
 
 .container {
     width: 100%;
-    max-width: 1400px;
-    padding: 40px 20px;
+    max-width: none;
+    padding: 40px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -197,9 +197,10 @@ button.primary-btn:active {
 
 .dashboard-top {
     display: grid;
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 450px 1fr;
     gap: 24px;
     margin-bottom: 24px;
+    width: 100%;
 }
 
 /* Brutal Card */
