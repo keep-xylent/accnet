@@ -7,9 +7,14 @@
     --accent: #ffffff;
     --accent-hover: #cccccc;
     
-    --success: #ffffff;
-    --warning: #aaaaaa;
-    --error: #ffffff;
+    --success: #00ffa3;
+    --warning: #ffb800;
+    --error: #ff3366;
+    
+    --demand-amazing: #ff00ff;
+    --demand-high: #00ffa3;
+    --demand-normal: #00f0ff;
+    --demand-low: #ffb800;
     
     --text-main: #ffffff;
     --text-muted: #888888;
@@ -249,7 +254,6 @@ button.primary-btn:active {
     background: var(--bg-base);
     padding: 0;
     box-shadow: 6px 6px 0px var(--border-glass);
-    filter: grayscale(100%) contrast(1.2);
 }
 
 .status-badge {
@@ -258,7 +262,7 @@ button.primary-btn:active {
     right: -10px;
     width: 28px;
     height: 28px;
-    background: var(--text-main);
+    background: var(--success);
     border: 4px solid var(--bg-base);
 }
 
@@ -430,12 +434,11 @@ button.primary-btn:active {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(100%);
-    transition: filter 0.1s;
+    transition: transform 0.1s;
 }
 
 .item-card:hover .item-thumb {
-    filter: grayscale(0%);
+    transform: scale(1.05);
 }
 
 .item-tags {
@@ -458,8 +461,7 @@ button.primary-btn:active {
     border: 3px solid var(--text-main);
 }
 
-.tag-limited { background: var(--bg-base); color: var(--text-main); }
-.tag-unique { background: var(--text-main); color: var(--bg-base); }
+.tag-roblox-limited { background: var(--bg-base); color: var(--success); border-color: var(--success); }
 
 .serial {
     font-family: var(--font-mono);
@@ -485,6 +487,11 @@ button.primary-btn:active {
     z-index: 5;
 }
 
+.demand-amazing { border-color: var(--demand-amazing); color: var(--demand-amazing); }
+.demand-high { border-color: var(--demand-high); color: var(--demand-high); }
+.demand-normal { border-color: var(--demand-normal); color: var(--demand-normal); }
+.demand-low { border-color: var(--demand-low); color: var(--demand-low); }
+
 .item-name {
     font-family: var(--font-mono);
     font-size: 14px;
@@ -504,14 +511,14 @@ button.primary-btn:active {
     font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 800;
-    color: var(--bg-base);
-    background: var(--text-main);
+    color: var(--success);
+    background: var(--bg-base);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     padding: 8px 16px;
-    border: 3px solid var(--text-main);
+    border: 3px solid var(--success);
     box-shadow: 4px 4px 0px var(--border-glass);
 }
 
@@ -544,14 +551,14 @@ button.primary-btn:active {
 
 .private-alert {
     background: var(--bg-base);
-    border: 4px dashed var(--text-main);
-    color: var(--text-main);
+    border: 4px dashed var(--error);
+    color: var(--error);
     padding: 40px;
     text-align: center;
     margin-top: 24px;
     font-weight: 800;
     text-transform: uppercase;
-    box-shadow: 8px 8px 0px var(--text-main);
+    box-shadow: 8px 8px 0px var(--error);
     font-family: var(--font-mono);
 }
 
@@ -574,22 +581,22 @@ button.primary-btn:active {
 
 .modal-box {
     background: var(--bg-base);
-    border: 4px solid var(--text-main);
+    border: 4px solid var(--error);
     padding: 40px;
     width: 100%;
     max-width: 400px;
     text-align: center;
-    box-shadow: 12px 12px 0px var(--text-main);
+    box-shadow: 12px 12px 0px var(--error);
 }
 
-.modal-icon { font-size: 56px; color: var(--text-main); margin-bottom: 20px; }
+.modal-icon { font-size: 56px; color: var(--error); margin-bottom: 20px; }
 .modal-title { font-family: var(--font-heading); font-size: 28px; margin-bottom: 16px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;}
 .modal-text { color: var(--text-muted); margin-bottom: 30px; font-size: 15px; font-family: var(--font-mono); font-weight: bold;}
 
 .modal-btn {
     background: var(--bg-base);
-    border: 4px solid var(--text-main);
-    color: var(--text-main);
+    border: 4px solid var(--error);
+    color: var(--error);
     padding: 16px 32px;
     font-family: var(--font-heading);
     font-size: 16px;
@@ -597,11 +604,11 @@ button.primary-btn:active {
     cursor: pointer;
     width: 100%;
     text-transform: uppercase;
-    box-shadow: 6px 6px 0px var(--text-main);
+    box-shadow: 6px 6px 0px var(--error);
     transition: all 0.1s;
 }
 
-.modal-btn:active { transform: translate(6px, 6px); box-shadow: 0px 0px 0px var(--text-main); }
+.modal-btn:active { transform: translate(6px, 6px); box-shadow: 0px 0px 0px var(--error); }
 
 .watermark {
     position: fixed;

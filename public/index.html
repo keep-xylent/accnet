@@ -209,9 +209,8 @@
                     const card = document.createElement('div');
                     card.className = 'item-card';
 
-                    let tagType = 'tag-limited';
-                    let tagLabel = item.serial ? 'Limited U' : 'Limited';
-                    if (item.serial) tagType = 'tag-unique';
+                    let tagType = 'tag-roblox-limited';
+                    let tagLabel = item.serial ? 'Limited <span style="color: var(--warning)">U</span>' : 'Limited';
 
                     card.innerHTML = `
                         <a href="https://www.roblox.com/catalog/${item.assetId}" target="_blank" class="corner-link" title="Open Catalog Link">
