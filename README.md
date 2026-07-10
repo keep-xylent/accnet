@@ -11,37 +11,31 @@
 
 </div>
 
----
-
-## <img src="https://api.iconify.design/lucide:info.svg?color=%2310b981" width="24" height="24" align="absmiddle"> Deskripsi
+## Deskripsi
 
 **accnet.** adalah alat pemeriksa nilai akun Roblox yang didesain secara khusus untuk menghitung aset *Limited* dengan tingkat presisi tinggi. Melalui integrasi data pasar secara *real-time*, platform ini menyajikan wawasan lengkap mulai dari estimasi konversi nilai aset hingga grafik analisis riwayat akun.
 
----
+## Fitur Utama
 
-## <img src="https://api.iconify.design/lucide:layout-list.svg?color=%2310b981" width="24" height="24" align="absmiddle"> Fitur Utama
-
-- **<img src="https://api.iconify.design/lucide:target.svg?color=%2338bdf8" width="20" height="20" align="absmiddle"> Limited-Only Audit**
+- **Limited-Only Audit**
   Fokus sepenuhnya pada perhitungan item *Limited* untuk menghasilkan estimasi *Networth* yang terjamin akurasinya.
 
-- **<img src="https://api.iconify.design/lucide:trending-up.svg?color=%2338bdf8" width="20" height="20" align="absmiddle"> Market Intelligence**
+- **Market Intelligence**
   Menarik data *real-time* langsung dari Rolimons untuk menampilkan indikasi *Demand* (seperti *Amazing*, *High*, dll) pada setiap item.
 
-- **<img src="https://api.iconify.design/lucide:coins.svg?color=%2338bdf8" width="20" height="20" align="absmiddle"> Multi-Currency Node**
+- **Multi-Currency Node**
   Sistem konversi nilai aset yang dinamis dan instan ke dalam berbagai mata uang utama: `Robux (R$)`, `USD ($)`, dan `IDR (Rp)`.
 
-- **<img src="https://api.iconify.design/lucide:line-chart.svg?color=%2338bdf8" width="20" height="20" align="absmiddle"> RAP Analysis History**
+- **RAP Analysis History**
   Menyediakan grafik tren historis *Networth* selama 7 hari terakhir yang konsisten dan deterministik untuk setiap profil pengguna.
 
-- **<img src="https://api.iconify.design/lucide:monitor-smartphone.svg?color=%2338bdf8" width="20" height="20" align="absmiddle"> Fully Responsive**
+- **Fully Responsive**
   Antarmuka premium yang dirancang secara optimal agar tetap nyaman digunakan dan terlihat rapi, baik saat diakses melalui Desktop maupun perangkat *Mobile*.
 
-- **<img src="https://api.iconify.design/lucide:zap.svg?color=%2338bdf8" width="20" height="20" align="absmiddle"> High Performance**
+- **High Performance**
   Memanfaatkan sistem *batch API* untuk memastikan sinkronisasi data yang cepat, memuat keseluruhan inventaris dalam waktu kurang dari 2 detik.
 
----
-
-## <img src="https://api.iconify.design/lucide:cpu.svg?color=%2310b981" width="24" height="24" align="absmiddle"> Teknologi
+## Teknologi
 
 Sistem ini dikembangkan menggunakan tumpukan teknologi modern untuk memastikan stabilitas dan performa terbaik:
 
@@ -52,9 +46,7 @@ Sistem ini dikembangkan menggunakan tumpukan teknologi modern untuk memastikan s
 | **Visualisasi Data** | [![ApexCharts](https://img.shields.io/badge/ApexCharts-00E396?style=flat-square&logo=simpleanalytics&logoColor=white)](https://apexcharts.com/) |
 | **Integrasi API** | [![Roblox APIs](https://img.shields.io/badge/Roblox_Web_APIs-1e293b?style=flat-square&logo=roblox&logoColor=white)](https://create.roblox.com/) [![Rolimons API](https://img.shields.io/badge/Rolimons_Item_API-FF3333?style=flat-square&logo=json&logoColor=white)](https://www.rolimons.com/) |
 
----
-
-## <img src="https://api.iconify.design/lucide:shield-check.svg?color=%2310b981" width="24" height="24" align="absmiddle"> Keamanan & Privasi
+## Keamanan & Privasi
 
 > **Komitmen Transparansi** 
 > Keamanan Anda adalah prioritas utama. Aplikasi ini **tidak** akan pernah meminta, membutuhkan, ataupun menyimpan *cookie* dan kata sandi akun Roblox Anda. 
