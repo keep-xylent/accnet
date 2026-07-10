@@ -79,6 +79,18 @@ body {
     margin-bottom: 4px;
     text-transform: uppercase;
     text-shadow: 4px 4px 0px var(--border-glass);
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+
+.brand-dot {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-color: var(--success);
+    margin-left: 6px;
+    box-shadow: 4px 4px 0px var(--border-glass);
 }
 
 .sub-branding {
