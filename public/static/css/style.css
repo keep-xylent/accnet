@@ -197,7 +197,7 @@ button.primary-btn:active {
 
 .dashboard-top {
     display: grid;
-    grid-template-columns: 350px 1fr;
+    grid-template-columns: 420px 1fr;
     gap: 24px;
     margin-bottom: 24px;
 }
@@ -318,7 +318,7 @@ button.primary-btn:active {
 
 .networth-val {
     font-family: var(--font-heading);
-    font-size: 42px;
+    font-size: 34px;
     font-weight: 800;
     display: flex;
     align-items: center;
