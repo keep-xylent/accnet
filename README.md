@@ -5,7 +5,6 @@
 ![Repo Size](https://img.shields.io/github/repo-size/keep-xylent/accnet?style=for-the-badge&color=ff007f)
 [![Live Preview](https://img.shields.io/badge/Live_Preview-007bff?style=for-the-badge&logo=chainlink&logoColor=white)](https://xylent-accnet.hf.space/)
 
-*Platform analitik networth akun Roblox yang akurat, cepat, dan aman.*
 
 </div>
 
