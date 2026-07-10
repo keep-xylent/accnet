@@ -4,10 +4,6 @@
 </div>
 
 <div align="center">
-
-![Repo Size](https://img.shields.io/github/repo-size/keep-xylent/accnet?style=for-the-badge&color=10b981)
-[![Live Preview](https://img.shields.io/badge/Live_Preview-1e293b?style=for-the-badge&logo=chainlink&logoColor=10b981)](https://xylent-accnet.hf.space/)
-
 </div>
 
 **accnet.** adalah alat pemeriksa nilai akun Roblox yang didesain secara khusus untuk menghitung aset *Limited* dengan tingkat presisi tinggi. Melalui integrasi data pasar secara *real-time*, platform ini menyajikan wawasan lengkap mulai dari estimasi konversi nilai aset hingga grafik analisis riwayat akun.
