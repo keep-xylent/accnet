@@ -1,7 +1,6 @@
 <div align="center">
   <img src="public/favicon.svg" alt="ACCNET Logo" width="120">
   <h1>accnet.</h1>
-  <p><b>Asset Audit & Network Intelligence</b></p>
 </div>
 
 <div align="center">
