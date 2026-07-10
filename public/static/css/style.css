@@ -1,27 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap');
 
 :root {
-    --bg-base: #020617;     /* Sangat biru gelap */
-    --bg-surface: #0f172a;  /* Biru gelap */
-    --bg-item: #1e293b;     /* Biru medium gelap */
+    --bg-base: #0f172a;     /* Sangat biru gelap (Slate 900) */
+    --bg-surface: #1e293b;  /* Biru gelap (Slate 800) */
+    --bg-item: #334155;     /* Biru medium (Slate 700) */
     
-    --accent: #38bdf8;
-    --accent-hover: #7dd3fc;
+    --accent: #60a5fa;      /* Biru kalem (Blue 400) */
+    --accent-hover: #93c5fd;
     
-    --success: #00ffa3;
-    --warning: #ffb800;
-    --error: #ff3366;
+    --success: #10b981;     /* Hijau kalem (Emerald 500) */
+    --warning: #f59e0b;     /* Kuning/Amber kalem */
+    --error: #ef4444;       /* Merah kalem (Red 500) */
     
-    --demand-amazing: #ff00ff;
-    --demand-high: #00ffa3;
-    --demand-normal: #38bdf8;
-    --demand-low: #ffb800;
+    --demand-amazing: #d946ef; /* Fuchsia kalem */
+    --demand-high: #10b981;
+    --demand-normal: #60a5fa;
+    --demand-low: #f59e0b;
     
-    --text-main: #e0f2fe;   /* Putih kebiruan */
-    --text-muted: #94a3b8;  /* Biru abu-abu */
+    --text-main: #f8fafc;   /* Putih kebiruan terang */
+    --text-muted: #94a3b8;  /* Biru abu-abu (Slate 400) */
     
-    --border-strong: #38bdf8; /* Biru muda */
-    --border-glass: #0284c7;  /* Biru standar */
+    --border-strong: #94a3b8; /* Biru abu-abu kalem (Slate 400) */
+    --border-glass: #475569;  /* Slate 600 */
     
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
