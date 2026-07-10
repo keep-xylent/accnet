@@ -3,7 +3,7 @@
   <h1>accnet.</h1>
 </div>
 
-**accnet.** adalah alat pemeriksa nilai akun Roblox yang didesain secara khusus untuk menghitung aset *Limited* dengan tingkat presisi tinggi. Melalui integrasi data pasar secara *real-time* menggunakan [![Rolimons API](https://img.shields.io/badge/Rolimons_API-FF3333?style=flat-square&logo=github&logoColor=white)](https://github.com/maddoxbouldin/Rolimons-API), platform ini menyajikan wawasan lengkap mulai dari estimasi konversi nilai aset hingga grafik analisis riwayat akun.
+**accnet.** adalah alat pemeriksa nilai akun Roblox yang didesain secara khusus untuk menghitung aset *Limited* dengan tingkat presisi tinggi. Melalui integrasi data pasar secara *real-time* menggunakan [![Rolimons API](https://img.shields.io/badge/Rolimons_API-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/maddoxbouldin/Rolimons-API), platform ini menyajikan wawasan lengkap mulai dari estimasi konversi nilai aset hingga grafik analisis riwayat akun.
 
 ## Fitur Utama
 
