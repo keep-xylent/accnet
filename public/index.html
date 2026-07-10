@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <link rel="stylesheet" href="/static/css/style.css?v=5">
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
 </head>
 
 <body>
@@ -264,8 +264,9 @@
                 const card = document.createElement('div');
                 card.className = 'item-card';
 
-                let tagType = 'tag-roblox-limited';
-                let tagLabel = item.serial ? 'Limited <span style="color: var(--warning)">U</span>' : 'Limited';
+                let tagHtml = item.serial 
+                    ? `<div style="display: flex;"><span class="tag tag-roblox-limited" style="border-right: none;">LIMITED</span><span class="tag tag-u-box">U</span></div>`
+                    : `<span class="tag tag-roblox-limited">LIMITED</span>`;
 
                 card.innerHTML = `
                     <a href="https://www.roblox.com/catalog/${item.assetId}" target="_blank" class="corner-link" title="Open Catalog Link">
@@ -273,7 +274,7 @@
                     </a>
                     <div class="item-thumb-wrapper">
                         <div class="item-tags">
-                            <span class="tag ${tagType}">${tagLabel}</span>
+                            ${tagHtml}
                             ${item.serial ? `<div class="serial">#${item.serial}</div>` : ''}
                         </div>
                         <img src="${item.image}" class="item-thumb" alt="asset">

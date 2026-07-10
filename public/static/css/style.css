@@ -525,7 +525,18 @@ button.primary-btn:active {
     border: 3px solid var(--text-main);
 }
 
-.tag-roblox-limited { background: var(--bg-base); color: var(--success); border-color: var(--success); }
+.tag-roblox-limited { 
+    background: var(--success); 
+    color: #ffffff; 
+    border-color: var(--success); 
+}
+
+.tag-u-box {
+    background: var(--warning);
+    color: #000000;
+    border-color: var(--warning);
+    padding: 4px 8px; /* Slightly narrower padding for the U */
+}
 
 .serial {
     font-family: var(--font-mono);
