@@ -3,10 +3,7 @@
   <h1>accnet.</h1>
 </div>
 
-<div align="center">
-</div>
-
-**accnet.** adalah alat pemeriksa nilai akun Roblox yang didesain secara khusus untuk menghitung aset *Limited* dengan tingkat presisi tinggi. Melalui integrasi data pasar secara *real-time*, platform ini menyajikan wawasan lengkap mulai dari estimasi konversi nilai aset hingga grafik analisis riwayat akun.
+**accnet.** adalah alat pemeriksa nilai akun Roblox yang didesain secara khusus untuk menghitung aset *Limited* dengan tingkat presisi tinggi. Melalui integrasi data pasar secara *real-time* menggunakan [![Rolimons API](https://img.shields.io/badge/Rolimons_API-1e293b?style=flat-square&logo=json&logoColor=10b981)](https://www.rolimons.com/), platform ini menyajikan wawasan lengkap mulai dari estimasi konversi nilai aset hingga grafik analisis riwayat akun.
 
 ## Fitur Utama
 
@@ -27,17 +24,6 @@
 
 - **High Performance**
   Memanfaatkan sistem *batch API* untuk memastikan sinkronisasi data yang cepat, memuat keseluruhan inventaris dalam waktu kurang dari 2 detik.
-
-## Teknologi
-
-Sistem ini dikembangkan menggunakan tumpukan teknologi modern untuk memastikan stabilitas dan performa terbaik:
-
-| Lapisan Sistem | Teknologi yang Digunakan |
-| :--- | :--- |
-| **Backend** | [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-F38020?style=flat-square&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/) |
-| **Frontend** | [![JavaScript](https://img.shields.io/badge/Vanilla_JS-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS) [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML) |
-| **Visualisasi Data** | [![ApexCharts](https://img.shields.io/badge/ApexCharts-00E396?style=flat-square&logo=simpleanalytics&logoColor=white)](https://apexcharts.com/) |
-| **Integrasi API** | [![Roblox APIs](https://img.shields.io/badge/Roblox_Web_APIs-1e293b?style=flat-square&logo=roblox&logoColor=white)](https://create.roblox.com/) [![Rolimons API](https://img.shields.io/badge/Rolimons_Item_API-FF3333?style=flat-square&logo=json&logoColor=white)](https://www.rolimons.com/) |
 
 ## Keamanan & Privasi
 
