@@ -423,13 +423,74 @@ button.primary-btn:active {
     color: var(--bg-base);
 }
 
+/* Item Controls (Search & Pagination) */
+.item-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.item-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 16px;
+    background: var(--bg-base);
+    border: 3px solid var(--border-strong);
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    outline: none;
+    box-shadow: 4px 4px 0px var(--border-glass);
+}
+.item-search:focus {
+    border-color: var(--accent);
+}
+
+.pagination {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.page-btn {
+    padding: 8px 16px;
+    background: var(--bg-base);
+    border: 3px solid var(--border-strong);
+    color: var(--text-main);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--border-glass);
+}
+
+.page-btn:hover:not(:disabled) {
+    background: var(--border-strong);
+    color: var(--bg-base);
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.page-info {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+}
+
 .item-thumb-wrapper {
     position: relative;
     width: 100%;
     aspect-ratio: 1/1;
     overflow: hidden;
     margin-bottom: 20px;
-    background: #cbd5e1; /* Terang agar item hitam terlihat */
+    background: #4A4A4A; /* Custom dark grey background */
     border: 3px solid var(--border-strong);
 }
 

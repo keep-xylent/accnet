@@ -110,7 +110,7 @@ export async function onRequestPost(context) {
         }
 
         // 5. Final Processing
-        const finalItems = itemsRaw.sort((a, b) => b.price - a.price).slice(0, 20);
+        const finalItems = itemsRaw.sort((a, b) => b.price - a.price);
 
         // Generate History
         const history = [];

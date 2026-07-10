@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
 </head>
 
 <body>
@@ -99,6 +99,15 @@
                     <div class="section-title">Top Asset Inventory</div>
                 </div>
                 
+                <div class="item-controls" id="item-controls">
+                    <input type="text" id="item-search-input" class="item-search" placeholder="Search item name..." oninput="handleItemSearch(this.value)" autocomplete="off" spellcheck="false">
+                    <div class="pagination">
+                        <button id="btn-prev" class="page-btn" onclick="setItemPage(-1)">&lt; PREV</button>
+                        <span id="page-info" class="page-info">PAGE 1 OF 1</span>
+                        <button id="btn-next" class="page-btn" onclick="setItemPage(1)">NEXT &gt;</button>
+                    </div>
+                </div>
+
                 <div id="inventory-grid" class="grid"></div>
 
                 <div id="private-msg" class="private-alert hidden">
@@ -127,9 +136,12 @@
             currency: 'RBX',
             data: null,
             rates: {
-                USD: 0.007, // Middle ground rate
-                IDR: 110   // Rp 110 per Robux
-            }
+                USD: 0.007,
+                IDR: 110
+            },
+            itemSearch: '',
+            itemPage: 1,
+            itemsPerPage: 18
         };
 
         function setCurrency(curr) {
@@ -168,6 +180,9 @@
                 if (!response.ok) throw new Error("User not found");
 
                 appState.data = await response.json();
+                appState.itemSearch = '';
+                appState.itemPage = 1;
+                document.getElementById('item-search-input').value = '';
                 updateDisplay();
                 dashboard.classList.remove('hidden');
             } catch (err) {
@@ -199,40 +214,79 @@
             if (data.private) {
                 document.getElementById('private-msg').classList.remove('hidden');
                 document.getElementById('networth-amt').innerText = "RESTRICTED";
+                document.getElementById('item-controls').style.display = 'none';
             } else {
+                document.getElementById('item-controls').style.display = 'flex';
                 // Update Chart with converted data
                 const chartData = data.history.map(v => appState.currency === 'RBX' ? v : (v * appState.rates[appState.currency]));
                 renderChart(chartData);
 
                 // Populate Items
-                data.items.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'item-card';
-
-                    let tagType = 'tag-roblox-limited';
-                    let tagLabel = item.serial ? 'Limited <span style="color: var(--warning)">U</span>' : 'Limited';
-
-                    card.innerHTML = `
-                        <a href="https://www.roblox.com/catalog/${item.assetId}" target="_blank" class="corner-link" title="Open Catalog Link">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                        </a>
-                        <div class="item-thumb-wrapper">
-                            <div class="item-tags">
-                                <span class="tag ${tagType}">${tagLabel}</span>
-                                ${item.serial ? `<div class="serial">#${item.serial}</div>` : ''}
-                            </div>
-                            <img src="${item.image}" class="item-thumb" alt="asset">
-                            <span class="demand-tag demand-${item.demand.toLowerCase()}">${item.demand}</span>
-                        </div>
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-price">
-                            ${appState.currency === 'RBX' ? '<svg viewBox="0 0 91.99 100.06" style="width:20px; height:20px; fill:currentColor; vertical-align:middle; margin-top:-2px; flex-shrink:0;"><path d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z"/></svg>' : ''}
-                            ${formatValue(item.price)}
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                renderItems();
             }
+        }
+
+        function handleItemSearch(val) {
+            appState.itemSearch = val;
+            appState.itemPage = 1; // reset to first page on search
+            renderItems();
+        }
+
+        function setItemPage(delta) {
+            appState.itemPage += delta;
+            renderItems();
+        }
+
+        function renderItems() {
+            if (!appState.data || appState.data.private) return;
+            
+            const grid = document.getElementById('inventory-grid');
+            grid.innerHTML = '';
+            
+            let filtered = appState.data.items || [];
+            if (appState.itemSearch) {
+                const query = appState.itemSearch.toLowerCase();
+                filtered = filtered.filter(item => item.name.toLowerCase().includes(query));
+            }
+            
+            const totalPages = Math.ceil(filtered.length / appState.itemsPerPage) || 1;
+            if (appState.itemPage > totalPages) appState.itemPage = totalPages;
+            if (appState.itemPage < 1) appState.itemPage = 1;
+            
+            document.getElementById('page-info').innerText = `PAGE ${appState.itemPage} OF ${totalPages}`;
+            document.getElementById('btn-prev').disabled = appState.itemPage === 1;
+            document.getElementById('btn-next').disabled = appState.itemPage === totalPages;
+            
+            const startIdx = (appState.itemPage - 1) * appState.itemsPerPage;
+            const paginated = filtered.slice(startIdx, startIdx + appState.itemsPerPage);
+
+            paginated.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+
+                let tagType = 'tag-roblox-limited';
+                let tagLabel = item.serial ? 'Limited <span style="color: var(--warning)">U</span>' : 'Limited';
+
+                card.innerHTML = `
+                    <a href="https://www.roblox.com/catalog/${item.assetId}" target="_blank" class="corner-link" title="Open Catalog Link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                    <div class="item-thumb-wrapper">
+                        <div class="item-tags">
+                            <span class="tag ${tagType}">${tagLabel}</span>
+                            ${item.serial ? `<div class="serial">#${item.serial}</div>` : ''}
+                        </div>
+                        <img src="${item.image}" class="item-thumb" alt="asset">
+                        <span class="demand-tag demand-${item.demand.toLowerCase()}">${item.demand}</span>
+                    </div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-price">
+                        ${appState.currency === 'RBX' ? '<svg viewBox="0 0 91.99 100.06" style="width:20px; height:20px; fill:currentColor; vertical-align:middle; margin-top:-2px; flex-shrink:0;"><path d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z"/></svg>' : ''}
+                        ${formatValue(item.price)}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
 
         function showErrorModal(message) {
