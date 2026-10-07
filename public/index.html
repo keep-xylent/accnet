@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <link rel="stylesheet" href="/static/css/style.css?v=7">
+    <link rel="stylesheet" href="/static/css/style.css?v=9">
 </head>
 
 <body>
@@ -18,7 +18,6 @@
     <div class="container">
         <div class="header">
             <div class="branding">accnet<span class="brand-dot"></span></div>
-            <div class="sub-branding">Asset Audit & Network Intelligence</div>
         </div>
 
         <div class="search-container">
@@ -130,8 +129,69 @@
         </div>
     </div>
 
-    <!-- Javascript remains EXACTLY the same -->
+    <!-- Currency / Rate Setting Modal -->
+    <div id="rate-modal" class="modal-overlay">
+        <div class="rate-modal-box">
+            <div class="rate-modal-header">
+                <div class="rate-modal-title">EXCHANGE RATE SETTING</div>
+                <button type="button" class="rate-close-btn" onclick="closeRateModal()" aria-label="Close">&times;</button>
+            </div>
+
+            <div class="rate-form">
+                <div class="rate-field">
+                    <label for="rate-idr-input" class="rate-field-label">
+                        <span>RATE ROBUX KE RUPIAH (IDR)</span>
+                    </label>
+                    <div class="rate-input-wrap">
+                        <span class="rate-input-prefix">Rp</span>
+                        <input type="number" id="rate-idr-input" class="rate-styled-input" step="any" min="1" placeholder="110" oninput="updateRatePreview()">
+                        <span class="rate-input-unit">/ 1 R$</span>
+                    </div>
+                    <div class="rate-presets">
+                        <span class="preset-label">Preset:</span>
+                        <button type="button" class="preset-btn" onclick="applyPresetRate(80)">80</button>
+                        <button type="button" class="preset-btn" onclick="applyPresetRate(90)">90</button>
+                        <button type="button" class="preset-btn" onclick="applyPresetRate(100)">100</button>
+                        <button type="button" class="preset-btn" onclick="applyPresetRate(110)">110</button>
+                        <button type="button" class="preset-btn" onclick="applyPresetRate(120)">120</button>
+                    </div>
+                </div>
+
+                <div class="rate-preview-card">
+                    <div class="preview-title">HASIL SINKRONISASI KURS</div>
+                    <div class="preview-grid">
+                        <div class="preview-item">
+                            <span class="preview-lbl">1 R$ ke IDR</span>
+                            <span class="preview-val preview-highlight" id="preview-val-idr">Rp 110</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-lbl">1 R$ ke USD (Auto)</span>
+                            <span class="preview-val preview-accent" id="preview-val-usd">$0.007000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rate-modal-actions">
+                <button type="button" class="rate-btn-save" onclick="saveRateSettings()">SIMPAN RATE</button>
+                <div class="rate-btn-subgroup">
+                    <button type="button" class="rate-btn-reset" onclick="resetDefaultRates()">RESET DEFAULT</button>
+                    <button type="button" class="rate-btn-cancel" onclick="closeRateModal()">BATAL</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="rate-toast" class="rate-toast">
+        <span class="toast-icon">&#10003;</span>
+        <span id="rate-toast-msg">Rate kurs berhasil diperbarui!</span>
+    </div>
+
     <script>
+        const DEFAULT_RATE_IDR = 110;
+        const DEFAULT_USD_TO_IDR = 15714.2857; // 110 / 15714.2857 ≈ 0.007
+
         let appState = {
             currency: 'RBX',
             data: null,
@@ -139,10 +199,34 @@
                 USD: 0.007,
                 IDR: 110
             },
+            usdToIdr: DEFAULT_USD_TO_IDR,
+            isLiveRate: true,
             itemSearch: '',
             itemPage: 1,
             itemsPerPage: 18
         };
+
+        // Load persisted custom rates from localStorage
+        (function loadSavedRates() {
+            try {
+                const saved = localStorage.getItem('accnet_rates');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.IDR && parsed.IDR > 0) appState.rates.IDR = parsed.IDR;
+                    if (parsed.usdToIdr && parsed.usdToIdr > 0) appState.usdToIdr = parsed.usdToIdr;
+                    if (parsed.USD && parsed.USD > 0) {
+                        appState.rates.USD = parsed.USD;
+                    } else {
+                        appState.rates.USD = appState.rates.IDR / appState.usdToIdr;
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load saved rates:", e);
+            }
+        })();
+
+        // Auto-fetch live market rate on startup
+        fetchLiveExchangeRate();
 
         function setCurrency(curr) {
             appState.currency = curr;
@@ -158,8 +242,16 @@
         }
 
         async function performAudit() {
-            const username = document.getElementById('username').value.trim();
+            const rawVal = document.getElementById('username').value;
+            const username = rawVal.trim();
             if (!username) return;
+
+            // Special case: /rate opens the exchange rate configuration dialog
+            if (username.toLowerCase() === '/rate') {
+                document.getElementById('username').value = '';
+                openRateModal();
+                return;
+            }
 
             const statusMsg = document.getElementById('status-msg');
             const dashboard = document.getElementById('dashboard');
@@ -345,6 +437,166 @@
             chart = new ApexCharts(document.querySelector("#rap-chart"), options);
             chart.render();
         }
+
+        // Rate modal functions & Live Auto-Exchange
+        async function fetchLiveExchangeRate(showFeedback = false) {
+            const syncBtn = document.querySelector('.rate-sync-btn');
+            if (syncBtn) syncBtn.classList.add('spinning');
+
+            let rate = null;
+            try {
+                // Primary endpoint: Open Exchange Rates
+                try {
+                    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.rates && data.rates.IDR) rate = data.rates.IDR;
+                    }
+                } catch (e) {
+                    console.warn("Primary exchange rate API failed, trying fallback...", e);
+                }
+
+                // Fallback endpoint
+                if (!rate) {
+                    try {
+                        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data && data.rates && data.rates.IDR) rate = data.rates.IDR;
+                        }
+                    } catch (e) {
+                        console.warn("Fallback exchange rate API failed", e);
+                    }
+                }
+
+                if (rate && rate > 0) {
+                    appState.usdToIdr = rate;
+                    appState.isLiveRate = true;
+                    // Recalculate USD rate automatically
+                    appState.rates.USD = appState.rates.IDR / appState.usdToIdr;
+
+                    // Update inputs & helpers if elements exist
+                    const usdInput = document.getElementById('rate-usd-idr-input');
+                    if (usdInput) usdInput.value = Math.round(rate);
+
+                    const helper = document.getElementById('rate-usd-helper');
+                    if (helper) helper.innerHTML = `Kurs pasar real-time: <strong>1 USD = Rp ${Math.round(rate).toLocaleString('id-ID')}</strong>`;
+
+                    updateRatePreview();
+
+                    // Re-render dashboard if user profile is already loaded
+                    if (appState.data) {
+                        updateDisplay();
+                    }
+
+                    if (showFeedback) {
+                        showRateToast(`Kurs live pasar diperbarui: Rp ${Math.round(rate).toLocaleString('id-ID')}`);
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to sync live rate", err);
+                if (showFeedback) {
+                    showRateToast("Gagal mengambil kurs pasar live.");
+                }
+            } finally {
+                if (syncBtn) syncBtn.classList.remove('spinning');
+            }
+        }
+
+        function openRateModal() {
+            document.getElementById('rate-idr-input').value = appState.rates.IDR;
+            updateRatePreview();
+            document.getElementById('rate-modal').classList.add('active');
+            setTimeout(() => {
+                const input = document.getElementById('rate-idr-input');
+                if (input) { input.focus(); input.select(); }
+            }, 100);
+        }
+
+        function closeRateModal() {
+            document.getElementById('rate-modal').classList.remove('active');
+        }
+
+        function updateRatePreview() {
+            const idrVal = parseFloat(document.getElementById('rate-idr-input').value) || 0;
+            const usdToIdrVal = appState.usdToIdr || DEFAULT_USD_TO_IDR;
+            const usdVal = usdToIdrVal > 0 ? (idrVal / usdToIdrVal) : 0;
+
+            const previewIdr = document.getElementById('preview-val-idr');
+            if (previewIdr) previewIdr.innerText = 'Rp ' + Math.round(idrVal).toLocaleString('id-ID');
+
+            const previewUsd = document.getElementById('preview-val-usd');
+            if (previewUsd) previewUsd.innerText = '$' + usdVal.toFixed(6);
+        }
+
+        function applyPresetRate(val) {
+            document.getElementById('rate-idr-input').value = val;
+            updateRatePreview();
+        }
+
+        function resetDefaultRates() {
+            document.getElementById('rate-idr-input').value = DEFAULT_RATE_IDR;
+            fetchLiveExchangeRate(false);
+            updateRatePreview();
+        }
+
+        function saveRateSettings() {
+            const idr = parseFloat(document.getElementById('rate-idr-input').value);
+
+            if (!idr || idr <= 0) {
+                alert("Masukkan rate IDR yang valid (lebih besar dari 0).");
+                return;
+            }
+
+            const usdToIdr = appState.usdToIdr || DEFAULT_USD_TO_IDR;
+            const calculatedUsd = idr / usdToIdr;
+            appState.rates.IDR = idr;
+            appState.rates.USD = calculatedUsd;
+
+            try {
+                localStorage.setItem('accnet_rates', JSON.stringify({
+                    IDR: idr,
+                    USD: calculatedUsd,
+                    usdToIdr: usdToIdr
+                }));
+            } catch (e) {
+                console.warn("Could not save rates to localStorage:", e);
+            }
+
+            closeRateModal();
+            showRateToast(`Rate tersimpan: 1 R$ = Rp ${idr} (~$${calculatedUsd.toFixed(4)})`);
+
+            // If profile is currently displayed, re-render immediately
+            if (appState.data) {
+                updateDisplay();
+            }
+        }
+
+        let toastTimer = null;
+        function showRateToast(msg) {
+            const toast = document.getElementById('rate-toast');
+            const msgEl = document.getElementById('rate-toast-msg');
+            if (!toast || !msgEl) return;
+            msgEl.innerText = msg;
+            toast.classList.add('toast-show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('toast-show');
+            }, 3500);
+        }
+
+        // Close on background click
+        document.getElementById('rate-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'rate-modal') closeRateModal();
+        });
+
+        // Close modals on Escape key
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeRateModal();
+                closeErrorModal();
+            }
+        });
 
         // Enter key support
         document.getElementById('username').addEventListener('keypress', (e) => {
