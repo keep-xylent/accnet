@@ -111,9 +111,6 @@
                                 </svg>
                                 <span id="networth-amt" class="networth-amt">0</span>
                             </div>
-                            <div id="networth-sub-conversion" class="networth-conversion-sub">
-                                <span>≈ Rp 0 | ~$0.00 USD</span>
-                            </div>
                         </div>
 
                         <!-- Stats Micro Grid -->
@@ -301,6 +298,13 @@
 
     <!-- Main Application Orchestrator -->
     <script>
+        console.log(
+            `
+░█░█░█▀▀░▀█▀░░░█▀█░█▀█░▀█▀░█▀▀░█░█░░░█▀█░█▀█░▀█▀░█▀▀░█░█░░░█▀█░█▀▀░▀█▀░█▀█░█▀▀
+░█▀█░█▀▀░░█░░░░█▀█░█░█░░█░░█▀▀░█▀▄░░░█▀█░█░█░░█░░█▀▀░█▀▄░░░█▀█░▀▀█░░█░░█░█░█░█
+░▀░▀░▀▀▀░▀▀▀░░░▀░▀░▀░▀░░▀░░▀▀▀░▀░▀░░░▀░▀░▀░▀░░▀░░▀▀▀░▀░▀░░░▀░▀░▀▀▀░▀▀▀░▀░▀░▀▀▀`
+        );
+
         const DEFAULT_RATE_IDR = 110;
         const DEFAULT_USD_TO_IDR = 15714.2857; // 110 / 15714.2857 ≈ 0.007
 
@@ -440,7 +444,6 @@
             if (data.private) {
                 document.getElementById('private-msg').classList.remove('hidden');
                 document.getElementById('networth-amt').innerText = "RESTRICTED";
-                document.getElementById('networth-sub-conversion').innerText = "PRIVATE ASSETS HIDDEN";
                 document.getElementById('item-controls').style.display = 'none';
                 document.getElementById('inventory-grid').innerHTML = '';
                 document.getElementById('stat-total-items').innerText = "0";
@@ -451,11 +454,6 @@
                 document.getElementById('private-msg').classList.add('hidden');
                 document.getElementById('item-controls').style.display = 'flex';
                 document.getElementById('networth-amt').innerText = formatValue(data.networth);
-
-                // Sub-conversion estimate
-                const idrEst = 'Rp ' + Math.round(data.networth * appState.rates.IDR).toLocaleString('id-ID');
-                const usdEst = '$' + (data.networth * appState.rates.USD).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                document.getElementById('networth-sub-conversion').innerText = `≈ ${idrEst} | ~${usdEst} USD`;
 
                 // Summary micro stats
                 const totalItems = (data.items || []).length;
