@@ -1,6 +1,9 @@
 <div align="center">
   <img src="public/favicon.svg" alt="ACCNET Logo" width="120">
   <h1>accnet.</h1>
+  <p>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License: MIT"></a>
+  </p>
 </div>
 
 **accnet.** adalah alat pemeriksa nilai akun Roblox yang didesain secara khusus untuk menghitung aset *Limited* dengan tingkat presisi tinggi. Melalui integrasi data pasar secara *real-time* menggunakan [![Rolimons API](https://img.shields.io/badge/Rolimons_API-181717?style=flat-square&logo=roblox&logoColor=white)](https://www.rolimons.com), platform ini menyajikan wawasan lengkap mulai dari estimasi konversi nilai aset hingga grafik analisis riwayat akun.
@@ -31,3 +34,11 @@
 > Keamanan Anda adalah prioritas utama. Aplikasi ini **tidak** akan pernah meminta, membutuhkan, ataupun menyimpan *cookie* dan kata sandi akun Roblox Anda. 
 > 
 > Seluruh proses penarikan data sepenuhnya aman karena hanya bergantung pada API publik resmi untuk membaca inventaris yang bersifat terbuka (*public inventory*).
+
+## Lisensi & Penafian (Disclaimer)
+
+Proyek ini didistribusikan di bawah lisensi [MIT](LICENSE).
+
+> **Catatan Penafian**:  
+> Roblox adalah merek dagang terdaftar milik **Roblox Corporation**. Proyek **accnet.** dikembangkan secara independen oleh [keep-xylent](https://github.com/keep-xylent) untuk tujuan edukasi dan analitik komunitas, serta tidak terafiliasi, didukung, atau disponsori oleh Roblox Corporation maupun Rolimons.
+
