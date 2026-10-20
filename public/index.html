@@ -19,8 +19,19 @@
     <!-- ApexCharts for Stepline Charts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+    <!-- Early theme init to prevent flash of wrong theme (FOUC) -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('accnet_theme');
+                var theme = savedTheme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
+
     <!-- Design System Stylesheet -->
-    <link rel="stylesheet" href="/static/css/style.css?v=17">
+    <link rel="stylesheet" href="/static/css/style.css?v=39">
 </head>
 
 <body>
@@ -35,6 +46,18 @@
         <header class="header-bar">
             <div class="brand-section">
                 <div class="branding">accnet<span class="brand-dot"></span></div>
+            </div>
+            <div class="header-tools">
+                <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Dark / Light Mode" title="Ganti Mode Gelap / Terang">
+                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                        <circle cx="12" cy="12" r="4" fill="currentColor"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                    </svg>
+                    <span id="theme-toggle-text" class="theme-toggle-text">DARK</span>
+                </button>
             </div>
         </header>
 
@@ -77,14 +100,23 @@
             <div class="dashboard-top">
                 <!-- Profile Card (Left) -->
                 <div class="construct-card profile-card">
-                    <a id="user-roblox-link" href="#" target="_blank" rel="noopener noreferrer" class="corner-link"
-                        title="Open Official Roblox Profile">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                    </a>
+                    <div class="profile-corner-links">
+                        <a id="user-roblox-link" href="#" target="_blank" rel="noopener noreferrer"
+                            class="item-logo-btn item-btn-roblox" title="Buka Profil Roblox"
+                            aria-label="Roblox Profile">
+                            <svg viewBox="0 0 100 100" fill="currentColor" class="item-brand-icon">
+                                <path fill-rule="evenodd" d="M23.5 0 L100 19.5 L76.5 100 L0 80.5 Z M42 35 L65 41 L58 65 L35 59 Z" />
+                            </svg>
+                        </a>
+                        <a id="user-rolimons-link" href="#" target="_blank" rel="noopener noreferrer"
+                            class="item-logo-btn item-btn-rolimons" title="Buka Profil Rolimons"
+                            aria-label="Rolimons Profile">
+                            <svg viewBox="0 0 1094 1466.2" fill="currentColor" class="item-brand-icon">
+                                <path
+                                    d="M1094 521.6 0 0v469.5l141-67.4 250 119.2L0 707.8v369.7l815.6 388.7L315 893l779-371.4z" />
+                            </svg>
+                        </a>
+                    </div>
 
                     <div class="profile-card-content">
                         <!-- Identity Lockup -->
@@ -97,7 +129,7 @@
                             <div class="identity-meta">
                                 <h2 id="display-name" class="display-name">---</h2>
                                 <div id="username-handle" class="username-tag">@---</div>
-                                <div id="roblox-id" class="user-uid-badge">UID // 000000</div>
+                                <div id="roblox-id" class="user-uid-badge">UID: 000000</div>
                             </div>
                         </div>
 
@@ -105,10 +137,8 @@
                         <div class="networth-monolith">
                             <div class="networth-label" id="networth-header-label">ESTIMATED NETWORTH (RAP)</div>
                             <div id="total-networth" class="networth-value-row">
-                                <svg class="rbx-icon" viewBox="0 0 91.99 100.06">
-                                    <path
-                                        d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z" />
-                                </svg>
+                                <img id="networth-brand-icon" class="networth-brand-icon" src="/roblox-rolimon.svg"
+                                    alt="Roblox Rolimon Networth">
                                 <span id="networth-amt" class="networth-amt">0</span>
                             </div>
                         </div>
@@ -136,13 +166,28 @@
                     <div class="card-header-band">
                         <div class="card-analysis-tag">
                             <span class="tag-dot"></span>
-                            <span>RAP VALUE ANALYSIS</span>
+                            <span>VALUE GRAPH</span>
                         </div>
+                        <button type="button" id="btn-profile-predict" class="chart-predict-btn"
+                            onclick="toggleProfilePrediction()">
+                            <svg class="predict-icon-svg" viewBox="0 0 16 16">
+                                <path d="M1 11 L5 7 L9 10 L15 3" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="square" />
+                                <polygon points="11,3 15,3 15,7" fill="currentColor" />
+                            </svg>
+                            <span id="profile-predict-btn-text">PREDICT 7D</span>
+                        </button>
                     </div>
 
                     <div class="chart-card-content">
                         <div class="chart-legend-band">
-                            <span>7-DAY VALUE HISTORY</span>
+                            <div class="chart-legend-left">
+                                <span id="chart-history-label">7-DAY VALUE HISTORY</span>
+                                <div class="chart-legend-tags" id="profile-legend-tags">
+                                    <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('RAP', this)" aria-pressed="true" title="Sembunyikan / Tampilkan RAP"><span
+                                            class="legend-color-dot dot-rap"></span>RAP</button>
+                                </div>
+                            </div>
                             <span id="chart-currency-badge">R$</span>
                         </div>
                         <div id="rap-chart"></div>
@@ -258,6 +303,160 @@
         </div>
     </div>
 
+    <!-- Item Profile Modal -->
+    <div id="item-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="item-modal-title">
+        <div class="item-modal-box">
+            <!-- Constructivist Hazard Top Accent -->
+            <div class="item-modal-hazard-bar"></div>
+
+            <div class="item-modal-header">
+                <div class="item-modal-headline">
+                    <span class="item-modal-badge">ITEM PROFILE</span>
+                    <span id="item-modal-id-tag" class="item-modal-subtag">ID: 0</span>
+                </div>
+                <button type="button" class="rate-close-btn" onclick="closeItemModal()"
+                    aria-label="Close Profile">&times;</button>
+            </div>
+
+            <div class="item-modal-body">
+                <!-- Projected Warning (Conditional) -->
+                <div id="item-modal-projected" class="item-modal-projected-banner" style="display: none;">
+                    <span class="warning-icon">⚠</span>
+                    <div class="warning-content">
+                        <strong>PROJECTED ASSET</strong>
+                    </div>
+                </div>
+
+                <div class="item-modal-hero">
+                    <!-- Left: Item Visual & Name Card -->
+                    <div class="item-hero-card-left">
+                        <div class="item-card-thumb-area">
+                            <div class="item-modal-grid-decor"></div>
+                            <img id="item-modal-thumb" src="/favicon.svg" alt="Item preview" class="item-modal-thumb">
+                            <div id="item-modal-tags" class="item-modal-tags-overlay"></div>
+                        </div>
+                        <div class="item-card-name-area">
+                            <h2 id="item-modal-title" class="item-modal-name">Item Name</h2>
+                        </div>
+                    </div>
+
+                    <!-- Right: 7-Day RAP Chart Card -->
+                    <div class="item-hero-card-right">
+                        <div class="item-chart-header">
+                            <span class="item-chart-title" id="item-chart-title">VALUE GRAPH</span>
+                            <button type="button" id="btn-item-predict" class="chart-predict-btn"
+                                onclick="toggleItemPrediction()">
+                                <svg class="predict-icon-svg" viewBox="0 0 16 16">
+                                    <path d="M1 11 L5 7 L9 10 L15 3" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="square" />
+                                    <polygon points="11,3 15,3 15,7" fill="currentColor" />
+                                </svg>
+                                <span id="item-predict-btn-text">PREDICT 7D</span>
+                            </button>
+                        </div>
+                        <div class="item-chart-body">
+                            <div id="item-rap-chart"></div>
+                        </div>
+                        <!-- Item Rolling Forecast Dossier Bar -->
+                        <div id="item-predict-dossier" class="predict-dossier-bar hidden">
+                            <div class="predict-stat-group">
+                                <span class="predict-pill-dir" id="item-pred-badge">BULLISH • 68% UP</span>
+                                <span class="predict-pill-range" id="item-pred-range">TARGET: 0 — 0</span>
+                            </div>
+                            <div class="predict-factors-strip">
+                                <span class="predict-factor-tag">S<sub>t</sub>: <strong
+                                        id="item-pred-score">+0.00</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value Statistics Grid -->
+                <div class="item-modal-stats-section">
+                    <div class="item-modal-section-title">
+                        <span>STATISTIK VALUE</span>
+                    </div>
+
+                    <div class="item-modal-stats-grid">
+                        <!-- Stat 1: Current RAP -->
+                        <div class="item-stat-card">
+                            <div class="item-stat-head">
+                                <span class="item-stat-lbl">RECENT AVG PRICE (RAP)</span>
+                            </div>
+                            <div class="item-stat-main">
+                                <svg class="robux-icon-svg" viewBox="0 0 91.99 100.06">
+                                    <path
+                                        d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z" />
+                                </svg>
+                                <span id="item-stat-rap" class="item-stat-val">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Stat 2: Rolimons Value -->
+                        <div class="item-stat-card">
+                            <div class="item-stat-head">
+                                <span class="item-stat-lbl">ROLIMONS VALUE</span>
+                                <span id="item-stat-value-badge" class="item-stat-pill">VALUED</span>
+                            </div>
+                            <div class="item-stat-main">
+                                <svg class="robux-icon-svg" viewBox="0 0 91.99 100.06">
+                                    <path
+                                        d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z" />
+                                </svg>
+                                <span id="item-stat-val-amount" class="item-stat-val">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Stat 3: Demand & Sales Per Day (Split Box with Divider) -->
+                        <div class="item-stat-card item-stat-card-split">
+                            <div class="stat-split-col">
+                                <div class="item-stat-head">
+                                    <span class="item-stat-lbl">MARKET DEMAND</span>
+                                </div>
+                                <div class="item-badge-showcase">
+                                    <span id="item-stat-demand" class="modal-demand-pill">NORMAL</span>
+                                </div>
+                            </div>
+                            <div class="stat-col-sekat"></div>
+                            <div class="stat-split-col">
+                                <div class="item-stat-head">
+                                    <span class="item-stat-lbl">SALES / DAY</span>
+                                </div>
+                                <div class="item-badge-showcase">
+                                    <span id="item-stat-sales" class="modal-sales-pill">-- / DAY</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stat 4: Trend -->
+                        <div class="item-stat-card">
+                            <div class="item-stat-head">
+                                <span class="item-stat-lbl">MARKET TREND</span>
+                            </div>
+                            <div class="item-badge-showcase">
+                                <span id="item-stat-trend" class="modal-trend-pill">STABLE</span>
+                            </div>
+                        </div>
+
+                        <!-- Stat 5: Portfolio Weight -->
+                        <div class="item-stat-card item-stat-card-wide">
+                            <div class="item-stat-head">
+                                <span class="item-stat-lbl">PORTFOLIO DOMINANCE</span>
+                                <span id="item-stat-share-pct" class="item-stat-accent-pct">0.0%</span>
+                            </div>
+                            <div class="portfolio-progress-bar">
+                                <div id="item-stat-share-bar" class="portfolio-progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Constructivist Hazard Bottom Accent (Garis Merah Hitam) -->
+            <div class="item-modal-hazard-bottom"></div>
+        </div>
+    </div>
+
     <!-- Custom Access Error Modal -->
     <div id="error-modal" class="modal-overlay">
         <div class="modal-box">
@@ -294,7 +493,7 @@
     </footer>
 
     <!-- Constructivist Blueprint Canvas Script -->
-    <script src="/static/js/canvas.js?v=3"></script>
+    <script src="/static/js/canvas.js?v=5"></script>
 
     <!-- Main Application Orchestrator -->
     <script>
@@ -308,6 +507,51 @@
         const DEFAULT_RATE_IDR = 110;
         const DEFAULT_USD_TO_IDR = 15714.2857; // 110 / 15714.2857 ≈ 0.007
 
+        // Theme Manager (Dark / Light Mode)
+        function getInitialTheme() {
+            try {
+                const saved = localStorage.getItem('accnet_theme');
+                if (saved === 'dark' || saved === 'light') return saved;
+            } catch (e) {}
+            return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try {
+                localStorage.setItem('accnet_theme', theme);
+            } catch (e) {
+                console.warn("Could not save theme:", e);
+            }
+            const btn = document.getElementById('theme-toggle-btn');
+            const textEl = document.getElementById('theme-toggle-text');
+            if (textEl) {
+                textEl.innerText = theme === 'dark' ? 'LIGHT' : 'DARK';
+            }
+            if (btn) {
+                btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+                btn.setAttribute('title', theme === 'dark' ? 'Mode Terang' : 'Mode Gelap');
+            }
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            const nextTheme = current === 'dark' ? 'light' : 'dark';
+            applyTheme(nextTheme);
+
+            if (appState.data && chartInstance) {
+                const currRate = appState.currency === 'RBX' ? 1 : appState.rates[appState.currency];
+                const chartData = (appState.data.history || []).map(v => Math.round(v * currRate));
+                renderChart(chartData);
+            }
+            if (currentModalItem && itemChartInstance) {
+                renderItemChart(currentModalItem);
+            }
+        }
+
+        // Initialize toggle button state with active theme
+        applyTheme(document.documentElement.getAttribute('data-theme') || getInitialTheme());
+
         let appState = {
             currency: 'RBX',
             data: null,
@@ -319,7 +563,9 @@
             isLiveRate: true,
             itemSearch: '',
             itemPage: 1,
-            itemsPerPage: 18
+            itemsPerPage: 18,
+            profilePredictionActive: false,
+            itemPredictionActive: false
         };
 
         // Load saved exchange rates from localStorage
@@ -359,7 +605,15 @@
             const targetBtn = document.getElementById(`btn-${curr.toLowerCase()}`);
             if (targetBtn) targetBtn.classList.add('active');
 
+            const networthIcon = document.getElementById('networth-brand-icon');
+            if (networthIcon) {
+                networthIcon.style.display = (curr === 'RBX') ? 'inline-block' : 'none';
+            }
+
             if (appState.data) updateDisplay();
+            if (currentModalItem && document.getElementById('item-modal')?.classList.contains('active')) {
+                openItemModal(currentModalItem);
+            }
         }
 
         function formatValue(robux) {
@@ -370,6 +624,17 @@
                 return 'Rp ' + Math.round(robux * appState.rates.IDR).toLocaleString('id-ID');
             }
             return robux.toLocaleString();
+        }
+
+        function formatChartValue(val) {
+            if (val === null || val === undefined) return '';
+            if (appState.currency === 'USD') {
+                return '$' + Number(val).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            if (appState.currency === 'IDR') {
+                return 'Rp ' + Math.round(val).toLocaleString('id-ID');
+            }
+            return Math.round(val).toLocaleString();
         }
 
         async function performAudit() {
@@ -431,15 +696,27 @@
             document.getElementById('user-avatar').src = data.avatar || '/favicon.svg';
             document.getElementById('display-name').innerText = data.name.toUpperCase();
             document.getElementById('username-handle').innerText = `@${data.username}`;
-            document.getElementById('roblox-id').innerText = `UID // ${data.id}`;
+            document.getElementById('roblox-id').innerText = `UID: ${data.id}`;
             document.getElementById('user-roblox-link').href = `https://www.roblox.com/users/${data.id}/profile`;
+            const userRoliLink = document.getElementById('user-rolimons-link');
+            if (userRoliLink) userRoliLink.href = `https://www.rolimons.com/player/${data.id}`;
 
-            // 2. Networth Monolith
-            const networthLabel = appState.currency === 'RBX' ? 'ESTIMATED NETWORTH (RAP)' : `ESTIMATED NETWORTH (${appState.currency})`;
+            // 2. Networth Monolith (Use Rolimon's Value if available, otherwise RAP)
+            const hasRoliValue = Boolean(data.hasRolimonsValue && data.value && data.value > 0);
+            const effectiveNetworth = hasRoliValue ? data.value : (data.networth || 0);
+
+            const networthIcon = document.getElementById('networth-brand-icon');
+            if (networthIcon) {
+                networthIcon.style.display = (appState.currency === 'RBX') ? 'inline-block' : 'none';
+            }
+
+            let networthLabel;
+            if (hasRoliValue) {
+                networthLabel = appState.currency === 'RBX' ? 'ESTIMATED NETWORTH (ROLIMONS VALUE)' : `ESTIMATED NETWORTH (${appState.currency})`;
+            } else {
+                networthLabel = appState.currency === 'RBX' ? 'ESTIMATED NETWORTH (RAP)' : `ESTIMATED NETWORTH (${appState.currency})`;
+            }
             document.getElementById('networth-header-label').innerText = networthLabel;
-
-            const rbxIcon = document.querySelector('#total-networth .rbx-icon');
-            if (rbxIcon) rbxIcon.style.display = appState.currency === 'RBX' ? 'inline-block' : 'none';
 
             if (data.private) {
                 document.getElementById('private-msg').classList.remove('hidden');
@@ -453,7 +730,7 @@
             } else {
                 document.getElementById('private-msg').classList.add('hidden');
                 document.getElementById('item-controls').style.display = 'flex';
-                document.getElementById('networth-amt').innerText = formatValue(data.networth);
+                document.getElementById('networth-amt').innerText = formatValue(effectiveNetworth);
 
                 // Summary micro stats
                 const totalItems = (data.items || []).length;
@@ -463,7 +740,7 @@
                 if (totalItems > 0) {
                     const highest = data.items[0];
                     document.getElementById('stat-highest-item').innerText = highest.name;
-                    const avg = Math.round(data.networth / totalItems);
+                    const avg = Math.round(effectiveNetworth / totalItems);
                     document.getElementById('stat-avg-item').innerText = formatValue(avg);
                 } else {
                     document.getElementById('stat-highest-item').innerText = "NONE";
@@ -516,6 +793,9 @@
             paginated.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'item-card';
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('title', `Klik untuk melihat profil ${item.name}`);
 
                 let tagHtml = item.serial
                     ? `<div class="tag-limited-group"><span class="tag-limited">LIMITED</span><span class="tag-u-box">U</span></div>`
@@ -525,14 +805,19 @@
 
                 card.innerHTML = `
                     <div class="item-card-topbar">
-                        <span>ID // ${item.assetId}</span>
-                        <a href="https://www.roblox.com/catalog/${item.assetId}" target="_blank" rel="noopener noreferrer" class="corner-link" title="Open Roblox Catalog">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                <polyline points="15 3 21 3 21 9"></polyline>
-                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                            </svg>
-                        </a>
+                        <span>ID: ${item.assetId}</span>
+                        <div class="item-card-brand-links">
+                            <a href="https://www.roblox.com/catalog/${item.assetId}" target="_blank" rel="noopener noreferrer" class="item-logo-btn item-btn-roblox" title="Buka di Roblox Catalog" onclick="event.stopPropagation()">
+                                <svg viewBox="0 0 100 100" fill="currentColor" class="item-brand-icon">
+                                    <path fill-rule="evenodd" d="M23.5 0 L100 19.5 L76.5 100 L0 80.5 Z M42 35 L65 41 L58 65 L35 59 Z" />
+                                </svg>
+                            </a>
+                            <a href="https://www.rolimons.com/item/${item.assetId}" target="_blank" rel="noopener noreferrer" class="item-logo-btn item-btn-rolimons" title="Buka di Rolimons" onclick="event.stopPropagation()">
+                                <svg viewBox="0 0 1094 1466.2" fill="currentColor" class="item-brand-icon">
+                                    <path d="M1094 521.6 0 0v469.5l141-67.4 250 119.2L0 707.8v369.7l815.6 388.7L315 893l779-371.4z"/>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                     <div class="item-thumb-wrapper">
                         <div class="item-tags-overlay">
@@ -547,26 +832,521 @@
                         ${appState.currency === 'RBX' ? '<svg viewBox="0 0 91.99 100.06"><path d="M82,17.72A19.94,19.94,0,0,1,92,35V65.08A19.92,19.92,0,0,1,82,82.33L56,97.39a19.94,19.94,0,0,1-19.91,0L10,82.33A19.91,19.91,0,0,1,0,65.08V35A19.93,19.93,0,0,1,10,17.72L36,2.67A19.89,19.89,0,0,1,56,2.67ZM39.53,9.5,14.13,24.17a12.92,12.92,0,0,0-6.46,11.2V64.69a12.93,12.93,0,0,0,6.46,11.2l25.4,14.66a12.93,12.93,0,0,0,12.93,0l25.4-14.66a12.93,12.93,0,0,0,6.46-11.2V35.37a12.92,12.92,0,0,0-6.46-11.2L52.46,9.5a12.93,12.93,0,0,0-12.93,0ZM51.3,17.7l20,11.56a10.64,10.64,0,0,1,5.32,9.21V61.6a10.61,10.61,0,0,1-5.32,9.2l-20,11.57a10.61,10.61,0,0,1-10.62,0l-20-11.57a10.6,10.6,0,0,1-5.31-9.2V38.47a10.63,10.63,0,0,1,5.31-9.21l20-11.56a10.61,10.61,0,0,1,10.62,0ZM34.5,61.53h23v-23h-23Z"/></svg>' : ''}
                         <span>${formatValue(item.price)}</span>
                     </div>
+                    <div class="item-card-click-hint">LIHAT DETAIL &rarr;</div>
                 `;
+
+                card.addEventListener('click', () => {
+                    openItemModal(item);
+                });
+
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openItemModal(item);
+                    }
+                });
+
                 grid.appendChild(card);
             });
+        }
+
+        // ---------------------------------------------------------------------
+        // 7D ROLLING FORECAST & MULTI-HORIZON PROBABILITY ENGINE
+        // ---------------------------------------------------------------------
+        // Daily Score: S_t = 0.25*M_t + 0.20*D_t + 0.20*L_t + 0.15*V_t + 0.10*T_t + 0.10*R_t
+        // Logistic Probability: P_{t,h} = 1 / (1 + e^{-z_{t,h}})
+        // z_{t,h} = beta_0,h + beta_1,h*M_t + beta_2,h*D_t + beta_3,h*L_t + beta_4,h*V_t + beta_5,h*T_t + beta_6,h*R_t
+        // ---------------------------------------------------------------------
+        function computePredictionModel({
+            history,
+            currentPrice,
+            demand,
+            trend,
+            salesPerDay,
+            value,
+            isProjected
+        }) {
+            const p = (Array.isArray(history) && history.length >= 7)
+                ? history.slice(0, 7)
+                : [currentPrice, currentPrice, currentPrice, currentPrice, currentPrice, currentPrice, currentPrice];
+            const todayPrice = Number(p[6]) || Number(currentPrice) || 1000;
+
+            // 1. M_t: Momentum (7-day rate of change vs 7-day Simple Moving Average)
+            const sma7 = p.reduce((a, b) => a + Number(b), 0) / p.length;
+            const momRaw = sma7 > 0 ? (todayPrice - sma7) / sma7 : 0;
+            const Mt = Math.max(-1, Math.min(1, momRaw / 0.12));
+
+            // 2. D_t: Demand Normalized into [-1, +1]
+            const demandMap = {
+                'AMAZING': 1.0,
+                'HIGH': 0.5,
+                'NORMAL': 0.0,
+                'LOW': -0.5,
+                'NONE': -1.0,
+                'UNKNOWN': -1.0
+            };
+            const Dt = demandMap[(demand || '').toUpperCase()] ?? 0.0;
+
+            // 3. L_t: Liquidity & Velocity (Sales / Day)
+            const spd = typeof salesPerDay === 'number' ? salesPerDay : 0;
+            let Lt = -1.0;
+            if (spd >= 10) Lt = 1.0;
+            else if (spd >= 4) Lt = 0.6;
+            else if (spd >= 1.5) Lt = 0.2;
+            else if (spd >= 0.5) Lt = -0.3;
+            else if (spd > 0) Lt = -0.7;
+            else Lt = -1.0;
+
+            // 4. V_t: Volatility (Coefficient of Variation)
+            const variance = p.reduce((acc, val) => acc + Math.pow(Number(val) - sma7, 2), 0) / p.length;
+            const stdDev = Math.sqrt(variance);
+            const cv = sma7 > 0 ? stdDev / sma7 : 0;
+            let Vt;
+            if (cv < 0.01) Vt = -0.4;
+            else if (cv <= 0.08) Vt = 0.7;
+            else if (cv <= 0.18) Vt = 0.2;
+            else Vt = -0.8;
+
+            // 5. T_t: Market Trend Score
+            const trendMap = {
+                'RAISING': 1.0,
+                'STABLE': 0.0,
+                'LOWERING': -1.0,
+                'FLUCTUATING': 0.25,
+                'UNSTABLE': -0.4,
+                'NONE': 0.0
+            };
+            const Tt = trendMap[(trend || '').toUpperCase()] ?? 0.0;
+
+            // 6. R_t: Ratio of Actual Selling Price/Value vs Current RAP
+            const compValue = (value && Number(value) > 0) ? Number(value) : todayPrice;
+            const ratioRaw = todayPrice > 0 ? (compValue - todayPrice) / todayPrice : 0;
+            const Rt = Math.max(-1, Math.min(1, ratioRaw / 0.20));
+
+            // Penalty for projected items (manipulated RAP risk)
+            const projPenalty = isProjected ? -0.45 : 0;
+
+            // Composite Daily Score S_t
+            const St = Math.max(-1, Math.min(1,
+                (0.25 * Mt) + (0.20 * Dt) + (0.20 * Lt) + (0.15 * Vt) + (0.10 * Tt) + (0.10 * Rt) + projPenalty
+            ));
+
+            // Horizon-calibrated regression coefficients beta for h = 1..7
+            const HORIZON_BETAS = {
+                1: { b0: 0.02, bM: 0.85, bD: 0.45, bL: 0.40, bV: 0.20, bT: 0.65, bR: 0.55 },
+                2: { b0: 0.03, bM: 0.72, bD: 0.55, bL: 0.48, bV: 0.22, bT: 0.55, bR: 0.50 },
+                3: { b0: 0.04, bM: 0.60, bD: 0.65, bL: 0.54, bV: 0.25, bT: 0.45, bR: 0.45 },
+                4: { b0: 0.05, bM: 0.48, bD: 0.72, bL: 0.58, bV: 0.28, bT: 0.38, bR: 0.40 },
+                5: { b0: 0.05, bM: 0.38, bD: 0.78, bL: 0.62, bV: 0.30, bT: 0.32, bR: 0.35 },
+                6: { b0: 0.06, bM: 0.30, bD: 0.82, bL: 0.65, bV: 0.32, bT: 0.28, bR: 0.30 },
+                7: { b0: 0.06, bM: 0.24, bD: 0.85, bL: 0.68, bV: 0.34, bT: 0.25, bR: 0.26 }
+            };
+
+            const horizons = [];
+            const forecastPrices = [];
+            const lowerBounds = [];
+            const upperBounds = [];
+
+            let currentForecastPrice = todayPrice;
+            const baseDailyVol = Math.max(0.015, Math.min(0.06, cv));
+
+            for (let h = 1; h <= 7; h++) {
+                const beta = HORIZON_BETAS[h];
+                const z = beta.b0 +
+                    (beta.bM * Mt) +
+                    (beta.bD * Dt) +
+                    (beta.bL * Lt) +
+                    (beta.bV * Vt) +
+                    (beta.bT * Tt) +
+                    (beta.bR * Rt) +
+                    (projPenalty * 1.5);
+
+                const Pup = 1 / (1 + Math.exp(-z));
+                const Pdown = 1 - Pup;
+
+                const directionalDrift = (Pup - 0.5) * 2;
+                const dailyRate = directionalDrift * (0.018 * Math.pow(0.92, h - 1));
+                currentForecastPrice = Math.max(1, Math.round(currentForecastPrice * (1 + dailyRate)));
+
+                const spread = baseDailyVol * Math.sqrt(h) * 1.35;
+                const low = Math.max(1, Math.round(currentForecastPrice * (1 - spread)));
+                const high = Math.max(low, Math.round(currentForecastPrice * (1 + spread)));
+
+                horizons.push({
+                    h,
+                    z: Number(z.toFixed(3)),
+                    Pup: Number((Pup * 100).toFixed(1)),
+                    Pdown: Number((Pdown * 100).toFixed(1)),
+                    price: currentForecastPrice,
+                    low,
+                    high
+                });
+                forecastPrices.push(currentForecastPrice);
+                lowerBounds.push(low);
+                upperBounds.push(high);
+            }
+
+            const day7 = horizons[6];
+            let overallDirection = 'SIDEWAYS';
+            if (St >= 0.12) overallDirection = 'BULLISH';
+            else if (St <= -0.12) overallDirection = 'BEARISH';
+
+            const primaryProb = St >= 0 ? day7.Pup : day7.Pdown;
+
+            return {
+                factors: {
+                    Mt: Number(Mt.toFixed(2)),
+                    Dt: Number(Dt.toFixed(2)),
+                    Lt: Number(Lt.toFixed(2)),
+                    Vt: Number(Vt.toFixed(2)),
+                    Tt: Number(Tt.toFixed(2)),
+                    Rt: Number(Rt.toFixed(2)),
+                    St: Number(St.toFixed(2))
+                },
+                horizons,
+                forecastPrices,
+                lowerBounds,
+                upperBounds,
+                overallDirection,
+                primaryProb,
+                expectedDay7Price: day7.price,
+                rangeDay7: { min: day7.low, max: day7.high }
+            };
+        }
+
+        // Profile Predict 7D Toggle
+        function toggleProfilePrediction() {
+            appState.profilePredictionActive = !appState.profilePredictionActive;
+            if (appState.data && appState.data.history) {
+                const chartData = (appState.data.history || []).map(v => appState.currency === 'RBX' ? v : (v * appState.rates[appState.currency]));
+                renderChart(chartData);
+            }
+        }
+
+        // Toggle visibility of specific series on the profile chart
+        function toggleProfileSeries(seriesName, el) {
+            if (!chartInstance) return;
+            try {
+                chartInstance.toggleSeries(seriesName);
+                if (el) {
+                    const isHidden = el.classList.toggle('series-hidden');
+                    el.setAttribute('aria-pressed', isHidden ? 'false' : 'true');
+                }
+            } catch (e) {
+                console.error("Failed to toggle series:", seriesName, e);
+            }
+        }
+
+        // Profile 7-Day Rolimons Value History Extractor & Fallback Calculator
+        function getProfileValueHistory(data) {
+            if (!data) return null;
+            // If API explicitly indicates no Rolimons value:
+            if (data.hasRolimonsValue === false || data.value === null || data.value <= 0) {
+                return null;
+            }
+            // Check if user has any valued item or explicit valueHistory
+            const hasValuedItem = Boolean(
+                data.items && Array.isArray(data.items) &&
+                data.items.some(item => item.value && Number(item.value) > 0)
+            );
+            if (!hasValuedItem) {
+                return null;
+            }
+            if (data.valueHistory && Array.isArray(data.valueHistory) && data.valueHistory.length === 7) {
+                return data.valueHistory;
+            }
+            if (data.items && Array.isArray(data.items) && data.items.length > 0 && hasValuedItem) {
+                const vHist = [0, 0, 0, 0, 0, 0, 0];
+                let totalVal = 0;
+                data.items.forEach(item => {
+                    const isValued = item.value && Number(item.value) > 0;
+                    const val = isValued ? Number(item.value) : Number(item.price || 0);
+                    totalVal += val;
+                    const itemHist = (item.history && item.history.length === 7) ? item.history : null;
+                    for (let i = 0; i < 7; i++) {
+                        if (isValued) {
+                            let step = 1.0;
+                            if (item.trend === "Raising" && i < 3) step = 0.96;
+                            else if (item.trend === "Lowering" && i < 3) step = 1.04;
+                            vHist[i] += Math.round(val * step);
+                        } else if (itemHist) {
+                            vHist[i] += Number(itemHist[i]) || 0;
+                        } else {
+                            vHist[i] += val;
+                        }
+                    }
+                });
+                vHist[6] = totalVal;
+                return vHist;
+            }
+            return null;
         }
 
         // ApexCharts Constructivist Chart Engine
         let chartInstance = null;
 
         function renderChart(historyData) {
-            const strokeColor = '#E62B1E';
-            const gridColor = 'rgba(18, 19, 20, 0.12)';
-            const textColor = '#121314';
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const strokeColor = '#0084DD';
+            const roliBlueColor = isDark ? '#38BDF8' : '#004E92';
+            const histLineColor = isDark ? '#CBD5E1' : '#121314';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(18, 19, 20, 0.12)';
+            const textColor = isDark ? '#CBD5E1' : '#121314';
+            const markerStroke = isDark ? '#141822' : '#FFFFFF';
 
             document.getElementById('chart-currency-badge').innerText = appState.currency;
 
+            const predBtn = document.getElementById('btn-profile-predict');
+            const predBtnText = document.getElementById('profile-predict-btn-text');
+            const historyLabel = document.getElementById('chart-history-label');
+            const legendTags = document.getElementById('profile-legend-tags');
+
+            const currRate = appState.currency === 'RBX' ? 1 : appState.rates[appState.currency];
+
+            // Compute current Rolimons Value history converted to active currency (null if profile has no Rolimon's value)
+            const rawValueHistory = getProfileValueHistory(appState.data);
+            const hasRoliValue = rawValueHistory !== null;
+            const valueData = hasRoliValue ? rawValueHistory.map(v => Math.round(v * currRate)) : null;
+
+            let series = [];
+            let categories = [];
+            let colors = [];
+            let strokeOptions = {};
+            let markersOptions = {};
+            let pred = null;
+
+            if (appState.profilePredictionActive && appState.data) {
+                if (predBtn) predBtn.classList.add('active');
+                if (predBtnText) predBtnText.innerText = 'HISTORICAL';
+                if (historyLabel) historyLabel.innerText = '7D AI ROLLING FORECAST';
+
+                // Extract aggregate portfolio properties
+                const items = appState.data.items || [];
+                const topDemand = items.length > 0 ? items[0].demand : 'Normal';
+                const topTrend = items.length > 0 ? items[0].trend : 'Stable';
+                let totalDailySales = 0;
+                items.slice(0, 10).forEach(i => {
+                    if (clientResaleCache[i.assetId]) totalDailySales += clientResaleCache[i.assetId];
+                    else if (i.demand === 'Amazing') totalDailySales += 5;
+                    else if (i.demand === 'High') totalDailySales += 2;
+                });
+
+                const rawHist = (appState.data.history && appState.data.history.length >= 7)
+                    ? appState.data.history
+                    : historyData;
+
+                pred = computePredictionModel({
+                    history: rawHist,
+                    currentPrice: appState.data.networth,
+                    demand: topDemand,
+                    trend: topTrend,
+                    salesPerDay: totalDailySales,
+                    value: appState.data.value || appState.data.networth,
+                    isProjected: false
+                });
+
+                categories = ['6D AGO', '5D AGO', '4D AGO', '3D AGO', '2D AGO', 'YEST.', 'TODAY', '+1D', '+2D', '+3D', '+4D', '+5D', '+6D', '+7D'];
+                const forecastConverted = pred.forecastPrices.map(v => Math.round(v * currRate));
+
+                const rangeBarData = categories.map((cat, idx) => {
+                    if (idx < 7) {
+                        const hVal = Math.round(historyData[idx]);
+                        return { x: cat, y: [hVal, hVal] };
+                    } else {
+                        const h = pred.horizons[idx - 7];
+                        return { x: cat, y: [Math.round(h.low * currRate), Math.round(h.high * currRate)] };
+                    }
+                });
+
+                if (hasRoliValue) {
+                    if (legendTags) {
+                        legendTags.innerHTML = `
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('RAP HISTORIS', this)" aria-pressed="true" title="Sembunyikan / Tampilkan RAP Historis"><span class="legend-color-dot dot-hist"></span>RAP HISTORIS</button>
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('ROLIMONS VALUE', this)" aria-pressed="true" title="Sembunyikan / Tampilkan Rolimons Value"><span class="legend-color-dot dot-roli"></span>ROLIMONS VALUE</button>
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('PREDIKSI 7D', this)" aria-pressed="true" title="Sembunyikan / Tampilkan Prediksi 7D"><span class="legend-color-dot dot-pred"></span>PREDIKSI 7D</button>
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('RENTANG ESTIMASI', this)" aria-pressed="true" title="Sembunyikan / Tampilkan Rentang Estimasi"><span class="legend-color-dot dot-range"></span>RENTANG (MIN-MAX)</button>
+                        `;
+                    }
+
+                    series = [
+                        {
+                            name: 'RENTANG ESTIMASI',
+                            type: 'rangeBar',
+                            data: rangeBarData
+                        },
+                        {
+                            name: 'RAP HISTORIS',
+                            type: 'line',
+                            data: [...historyData, null, null, null, null, null, null, null]
+                        },
+                        {
+                            name: 'ROLIMONS VALUE',
+                            type: 'line',
+                            data: [...valueData, null, null, null, null, null, null, null]
+                        },
+                        {
+                            name: 'PREDIKSI 7D',
+                            type: 'line',
+                            data: [null, null, null, null, null, null, historyData[6], ...forecastConverted]
+                        }
+                    ];
+                    colors = [
+                        function ({ seriesIndex, dataPointIndex }) {
+                            if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : 'rgba(0, 132, 221, 0.28)';
+                            return histLineColor;
+                        },
+                        histLineColor,
+                        roliBlueColor,
+                        '#0084DD'
+                    ];
+                    strokeOptions = {
+                        curve: ['straight', 'stepline', 'stepline', 'stepline'],
+                        width: [1, 2.5, 2.5, 3],
+                        dashArray: [0, 0, 0, 5],
+                        colors: [
+                            function ({ seriesIndex, dataPointIndex }) {
+                                if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : '#0084DD';
+                                if (seriesIndex === 1) return histLineColor;
+                                if (seriesIndex === 2) return roliBlueColor;
+                                return '#0084DD';
+                            },
+                            histLineColor,
+                            roliBlueColor,
+                            '#0084DD'
+                        ]
+                    };
+                    markersOptions = {
+                        size: [0, 3, 3, 4],
+                        colors: ['transparent', histLineColor, roliBlueColor, '#0084DD'],
+                        strokeColors: markerStroke,
+                        strokeWidth: 2,
+                        hover: { size: 6 }
+                    };
+                } else {
+                    if (legendTags) {
+                        legendTags.innerHTML = `
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('RAP HISTORIS', this)" aria-pressed="true" title="Sembunyikan / Tampilkan RAP Historis"><span class="legend-color-dot dot-hist"></span>RAP HISTORIS</button>
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('PREDIKSI 7D', this)" aria-pressed="true" title="Sembunyikan / Tampilkan Prediksi 7D"><span class="legend-color-dot dot-pred"></span>PREDIKSI 7D</button>
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('RENTANG ESTIMASI', this)" aria-pressed="true" title="Sembunyikan / Tampilkan Rentang Estimasi"><span class="legend-color-dot dot-range"></span>RENTANG (MIN-MAX)</button>
+                        `;
+                    }
+
+                    series = [
+                        {
+                            name: 'RENTANG ESTIMASI',
+                            type: 'rangeBar',
+                            data: rangeBarData
+                        },
+                        {
+                            name: 'RAP HISTORIS',
+                            type: 'line',
+                            data: [...historyData, null, null, null, null, null, null, null]
+                        },
+                        {
+                            name: 'PREDIKSI 7D',
+                            type: 'line',
+                            data: [null, null, null, null, null, null, historyData[6], ...forecastConverted]
+                        }
+                    ];
+                    colors = [
+                        function ({ seriesIndex, dataPointIndex }) {
+                            if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : 'rgba(0, 132, 221, 0.28)';
+                            return histLineColor;
+                        },
+                        histLineColor,
+                        '#0084DD'
+                    ];
+                    strokeOptions = {
+                        curve: ['straight', 'stepline', 'stepline'],
+                        width: [1, 2.5, 3],
+                        dashArray: [0, 0, 5],
+                        colors: [
+                            function ({ seriesIndex, dataPointIndex }) {
+                                if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : '#0084DD';
+                                if (seriesIndex === 1) return histLineColor;
+                                return '#0084DD';
+                            },
+                            histLineColor,
+                            '#0084DD'
+                        ]
+                    };
+                    markersOptions = {
+                        size: [0, 3, 4],
+                        colors: ['transparent', histLineColor, '#0084DD'],
+                        strokeColors: markerStroke,
+                        strokeWidth: 2,
+                        hover: { size: 6 }
+                    };
+                }
+            } else {
+                if (predBtn) predBtn.classList.remove('active');
+                if (predBtnText) predBtnText.innerText = 'PREDICT 7D';
+                if (historyLabel) historyLabel.innerText = '7-DAY VALUE HISTORY';
+
+                categories = ['6D AGO', '5D AGO', '4D AGO', '3D AGO', '2D AGO', 'YEST.', 'TODAY'];
+
+                if (hasRoliValue) {
+                    if (legendTags) {
+                        legendTags.innerHTML = `
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('RAP', this)" aria-pressed="true" title="Sembunyikan / Tampilkan RAP"><span class="legend-color-dot dot-rap"></span>RAP</button>
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('ROLIMONS VALUE', this)" aria-pressed="true" title="Sembunyikan / Tampilkan Rolimons Value"><span class="legend-color-dot dot-roli"></span>ROLIMONS VALUE</button>
+                        `;
+                    }
+
+                    series = [
+                        {
+                            name: 'RAP',
+                            data: historyData
+                        },
+                        {
+                            name: 'ROLIMONS VALUE',
+                            data: valueData
+                        }
+                    ];
+                    colors = [strokeColor, roliBlueColor];
+                    strokeOptions = {
+                        curve: 'stepline',
+                        width: [3.5, 2.5],
+                        dashArray: [0, 0]
+                    };
+                    markersOptions = {
+                        size: [4, 4],
+                        colors: [strokeColor, roliBlueColor],
+                        strokeColors: markerStroke,
+                        strokeWidth: 2,
+                        hover: { size: 6 }
+                    };
+                } else {
+                    if (legendTags) {
+                        legendTags.innerHTML = `
+                            <button type="button" class="chart-tag-item" onclick="toggleProfileSeries('RAP', this)" aria-pressed="true" title="Sembunyikan / Tampilkan RAP"><span class="legend-color-dot dot-rap"></span>RAP</button>
+                        `;
+                    }
+
+                    series = [
+                        {
+                            name: 'RAP',
+                            data: historyData
+                        }
+                    ];
+                    colors = [strokeColor];
+                    strokeOptions = {
+                        curve: 'stepline',
+                        width: [3.5],
+                        dashArray: [0]
+                    };
+                    markersOptions = {
+                        size: [4],
+                        colors: [strokeColor],
+                        strokeColors: markerStroke,
+                        strokeWidth: 2,
+                        hover: { size: 6 }
+                    };
+                }
+            }
+
             const options = {
-                series: [{
-                    name: appState.currency + ' VALUATION',
-                    data: historyData
-                }],
+                series: series,
                 chart: {
                     height: 290,
                     type: 'line',
@@ -577,22 +1357,23 @@
                     animations: {
                         enabled: true,
                         easing: 'easeinout',
-                        speed: 500
+                        speed: 400
                     }
                 },
-                colors: [strokeColor],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '32%',
+                        borderRadius: 2
+                    }
+                },
+                legend: {
+                    show: false
+                },
+                colors: colors,
                 dataLabels: { enabled: false },
-                stroke: {
-                    curve: 'stepline',
-                    width: 3.5
-                },
-                markers: {
-                    size: 4,
-                    colors: [strokeColor],
-                    strokeColors: '#FFFFFF',
-                    strokeWidth: 2,
-                    hover: { size: 7 }
-                },
+                stroke: strokeOptions,
+                markers: markersOptions,
                 grid: {
                     borderColor: gridColor,
                     strokeDashArray: 0,
@@ -600,13 +1381,13 @@
                     yaxis: { lines: { show: true } }
                 },
                 xaxis: {
-                    categories: ['6D AGO', '5D AGO', '4D AGO', '3D AGO', '2D AGO', 'YEST.', 'TODAY'],
+                    categories: categories,
                     axisBorder: { show: true, color: strokeColor, height: 2 },
                     axisTicks: { show: true, color: strokeColor },
                     labels: {
                         style: {
                             colors: textColor,
-                            fontSize: '10px',
+                            fontSize: '9.5px',
                             fontWeight: 800,
                             fontFamily: "'JetBrains Mono', monospace"
                         }
@@ -614,20 +1395,37 @@
                 },
                 yaxis: {
                     labels: {
-                        formatter: val => formatValue(val / (appState.currency === 'RBX' ? 1 : appState.rates[appState.currency])),
+                        formatter: val => val !== null && val !== undefined ? formatChartValue(val) : '',
                         style: {
                             colors: textColor,
-                            fontSize: '11px',
+                            fontSize: '10.5px',
                             fontFamily: "'JetBrains Mono', monospace",
                             fontWeight: 800
                         }
                     }
                 },
                 tooltip: {
-                    theme: 'light',
-                    x: { show: false },
+                    theme: isDark ? 'dark' : 'light',
+                    shared: true,
+                    intersect: false,
                     y: {
-                        formatter: val => formatValue(val / (appState.currency === 'RBX' ? 1 : appState.rates[appState.currency]))
+                        formatter: (val, opts) => {
+                            if (val === null || val === undefined) return '';
+                            if (Array.isArray(val)) {
+                                if (val[0] === val[1]) return '';
+                                return `${formatChartValue(val[0])} — ${formatChartValue(val[1])}`;
+                            }
+                            const formatted = formatChartValue(val);
+                            if (pred && opts && typeof opts.dataPointIndex === 'number' && opts.dataPointIndex >= 7) {
+                                const hIdx = opts.dataPointIndex - 7;
+                                const horizon = pred.horizons[hIdx];
+                                const predLineIdx = hasRoliValue ? 3 : 2;
+                                if (horizon && opts.seriesIndex === predLineIdx) {
+                                    return `${formatted} (P↑: ${horizon.Pup}%)`;
+                                }
+                            }
+                            return formatted;
+                        }
                     },
                     style: {
                         fontFamily: "'JetBrains Mono', monospace"
@@ -763,6 +1561,592 @@
             document.getElementById('error-modal').classList.remove('active');
         }
 
+        // Item Profile Modal Handlers
+        let itemChartInstance = null;
+
+        function getItemHistory(item) {
+            if (item.history && Array.isArray(item.history) && item.history.length === 7) {
+                return item.history;
+            }
+            const hist = [];
+            const price = Number(item.price) || 0;
+            let seed = Number(item.assetId) || 1000;
+            for (let i = 0; i < 7; i++) {
+                let trendFactor = 0;
+                if (item.trend === "Raising") trendFactor = (i - 6) * -0.015;
+                else if (item.trend === "Lowering") trendFactor = (i - 6) * 0.015;
+                const x = Math.sin(seed++) * 10000;
+                const rand = x - Math.floor(x);
+                const variance = ((rand * 0.08) - 0.04) + trendFactor;
+                hist.push(Math.max(1, Math.round(price * (1 + variance))));
+            }
+            hist[6] = price;
+            return hist;
+        }
+
+        // Item Predict 7D Toggle
+        function toggleItemPrediction() {
+            appState.itemPredictionActive = !appState.itemPredictionActive;
+            if (currentModalItem) {
+                renderItemChart(currentModalItem);
+            }
+        }
+
+        function renderItemChart(item) {
+            const chartContainer = document.querySelector("#item-rap-chart");
+            if (!chartContainer) return;
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const strokeColor = '#0084DD';
+            const roliBlueColor = isDark ? '#38BDF8' : '#004E92';
+            const histLineColor = isDark ? '#CBD5E1' : '#121314';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(18, 19, 20, 0.12)';
+            const textColor = isDark ? '#CBD5E1' : '#121314';
+            const markerStroke = isDark ? '#141822' : '#FFFFFF';
+
+            const predBtn = document.getElementById('btn-item-predict');
+            const predBtnText = document.getElementById('item-predict-btn-text');
+            const predDossier = document.getElementById('item-predict-dossier');
+            const chartTitle = document.getElementById('item-chart-title');
+
+            const rawHistory = getItemHistory(item);
+            const currRate = appState.currency === 'RBX' ? 1 : appState.rates[appState.currency];
+            const historyData = rawHistory.map(v => Math.round(v * currRate));
+
+            let series = [];
+            let categories = [];
+            let colors = [];
+            let strokeOptions = {};
+            let markersOptions = {};
+            let pred = null;
+            let chartHeight = 152;
+
+            // Check if item has an assigned Rolimons Value
+            const itemValRaw = (item.value && Number(item.value) > 0) ? Number(item.value) : null;
+            const itemValConverted = itemValRaw !== null ? Math.round(itemValRaw * currRate) : null;
+            const itemValArray = itemValConverted !== null ? Array(7).fill(itemValConverted) : null;
+
+            if (appState.itemPredictionActive) {
+                chartHeight = 120;
+                if (predBtn) predBtn.classList.add('active');
+                if (predBtnText) predBtnText.innerText = 'HISTORIS';
+                if (chartTitle) chartTitle.innerHTML = '7D ROLLING FORECAST';
+                if (predDossier) predDossier.classList.remove('hidden');
+
+                const spd = clientResaleCache[item.assetId] !== undefined ? clientResaleCache[item.assetId] : null;
+
+                pred = computePredictionModel({
+                    history: rawHistory,
+                    currentPrice: item.price,
+                    demand: item.demand,
+                    trend: item.trend,
+                    salesPerDay: spd,
+                    value: item.value || item.price,
+                    isProjected: !!item.isProjected
+                });
+
+                // Update Item Dossier Bar
+                const badgeEl = document.getElementById('item-pred-badge');
+                if (badgeEl) {
+                    badgeEl.innerText = `${pred.overallDirection} • ${pred.primaryProb}% PROB.`;
+                    badgeEl.className = `predict-pill-dir ${pred.overallDirection.toLowerCase()}`;
+                }
+
+                const rangeEl = document.getElementById('item-pred-range');
+                if (rangeEl) {
+                    rangeEl.innerText = `7D: ${formatValue(pred.rangeDay7.min)} — ${formatValue(pred.rangeDay7.max)}`;
+                }
+
+                const scoreEl = document.getElementById('item-pred-score');
+                if (scoreEl) {
+                    scoreEl.innerText = `${pred.factors.St >= 0 ? '+' : ''}${pred.factors.St}`;
+                }
+
+                const forecastConverted = pred.forecastPrices.map(v => Math.round(v * currRate));
+
+                categories = ['6H LALU', '5H LALU', '4H LALU', '3H LALU', '2H LALU', 'KMRN', 'HARI INI', '+1H', '+2H', '+3H', '+4H', '+5H', '+6H', '+7H'];
+
+                const rangeBarData = categories.map((cat, idx) => {
+                    if (idx < 7) {
+                        const hVal = Math.round(historyData[idx]);
+                        return { x: cat, y: [hVal, hVal] };
+                    } else {
+                        const h = pred.horizons[idx - 7];
+                        return { x: cat, y: [Math.round(h.low * currRate), Math.round(h.high * currRate)] };
+                    }
+                });
+
+                if (itemValArray) {
+                    series = [
+                        {
+                            name: 'RENTANG ESTIMASI',
+                            type: 'rangeBar',
+                            data: rangeBarData
+                        },
+                        {
+                            name: 'HISTORIS',
+                            type: 'line',
+                            data: [...historyData, null, null, null, null, null, null, null]
+                        },
+                        {
+                            name: 'ROLIMONS VALUE',
+                            type: 'line',
+                            data: [...itemValArray, null, null, null, null, null, null, null]
+                        },
+                        {
+                            name: 'PREDIKSI 7D',
+                            type: 'line',
+                            data: [null, null, null, null, null, null, historyData[6], ...forecastConverted]
+                        }
+                    ];
+                    colors = [
+                        function ({ seriesIndex, dataPointIndex }) {
+                            if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : 'rgba(0, 132, 221, 0.28)';
+                            return histLineColor;
+                        },
+                        histLineColor,
+                        roliBlueColor,
+                        '#0084DD'
+                    ];
+                    strokeOptions = {
+                        curve: ['straight', 'stepline', 'stepline', 'stepline'],
+                        width: [1, 2, 2, 2.5],
+                        dashArray: [0, 0, 0, 4],
+                        colors: [
+                            function ({ seriesIndex, dataPointIndex }) {
+                                if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : '#0084DD';
+                                if (seriesIndex === 1) return histLineColor;
+                                if (seriesIndex === 2) return roliBlueColor;
+                                return '#0084DD';
+                            },
+                            histLineColor,
+                            roliBlueColor,
+                            '#0084DD'
+                        ]
+                    };
+                    markersOptions = {
+                        size: [0, 2.5, 2.5, 3.5],
+                        colors: ['transparent', histLineColor, roliBlueColor, '#0084DD'],
+                        strokeColors: markerStroke,
+                        strokeWidth: 1.5,
+                        hover: { size: 5 }
+                    };
+                } else {
+                    series = [
+                        {
+                            name: 'RENTANG ESTIMASI',
+                            type: 'rangeBar',
+                            data: rangeBarData
+                        },
+                        {
+                            name: 'HISTORIS',
+                            type: 'line',
+                            data: [...historyData, null, null, null, null, null, null, null]
+                        },
+                        {
+                            name: 'PREDIKSI 7D',
+                            type: 'line',
+                            data: [null, null, null, null, null, null, historyData[6], ...forecastConverted]
+                        }
+                    ];
+                    colors = [
+                        function ({ seriesIndex, dataPointIndex }) {
+                            if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : 'rgba(0, 132, 221, 0.28)';
+                            return histLineColor;
+                        },
+                        histLineColor,
+                        '#0084DD'
+                    ];
+                    strokeOptions = {
+                        curve: ['straight', 'stepline', 'stepline'],
+                        width: [1, 2, 2.5],
+                        dashArray: [0, 0, 4],
+                        colors: [
+                            function ({ seriesIndex, dataPointIndex }) {
+                                if (seriesIndex === 0) return dataPointIndex < 7 ? 'transparent' : '#0084DD';
+                                if (seriesIndex === 1) return histLineColor;
+                                return '#0084DD';
+                            },
+                            histLineColor,
+                            '#0084DD'
+                        ]
+                    };
+                    markersOptions = {
+                        size: [0, 2.5, 3.5],
+                        colors: ['transparent', histLineColor, '#0084DD'],
+                        strokeColors: markerStroke,
+                        strokeWidth: 1.5,
+                        hover: { size: 5 }
+                    };
+                }
+            } else {
+                chartHeight = 152;
+                if (predBtn) predBtn.classList.remove('active');
+                if (predBtnText) predBtnText.innerText = 'PREDICT 7D';
+                if (chartTitle) chartTitle.innerText = 'VALUE GRAPH';
+                if (predDossier) predDossier.classList.add('hidden');
+
+                categories = ['6H LALU', '5H LALU', '4H LALU', '3H LALU', '2H LALU', 'KEMARIN', 'HARI INI'];
+
+                if (itemValArray) {
+                    series = [
+                        {
+                            name: 'RAP',
+                            data: historyData
+                        },
+                        {
+                            name: 'ROLIMONS VALUE',
+                            data: itemValArray
+                        }
+                    ];
+                    colors = [strokeColor, roliBlueColor];
+                    strokeOptions = {
+                        curve: 'stepline',
+                        width: [2.5, 2],
+                        dashArray: [0, 0]
+                    };
+                    markersOptions = {
+                        size: [3, 2.5],
+                        colors: [strokeColor, roliBlueColor],
+                        strokeColors: markerStroke,
+                        strokeWidth: 1.5,
+                        hover: { size: 5 }
+                    };
+                } else {
+                    series = [{
+                        name: 'RAP (' + appState.currency + ')',
+                        data: historyData
+                    }];
+                    colors = [strokeColor];
+                    strokeOptions = {
+                        curve: 'stepline',
+                        width: 2.5,
+                        dashArray: [0]
+                    };
+                    markersOptions = {
+                        size: 3,
+                        colors: [strokeColor],
+                        strokeColors: markerStroke,
+                        strokeWidth: 2,
+                        hover: { size: 5 }
+                    };
+                }
+            }
+
+            const options = {
+                series: series,
+                chart: {
+                    height: chartHeight,
+                    type: 'line',
+                    toolbar: { show: false },
+                    zoom: { enabled: false },
+                    background: 'transparent',
+                    fontFamily: "'JetBrains Mono', monospace",
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 350
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '32%',
+                        borderRadius: 2
+                    }
+                },
+                legend: {
+                    show: false
+                },
+                colors: colors,
+                dataLabels: { enabled: false },
+                stroke: strokeOptions,
+                markers: markersOptions,
+                grid: {
+                    borderColor: gridColor,
+                    strokeDashArray: 2,
+                    xaxis: { lines: { show: true } },
+                    yaxis: { lines: { show: true } },
+                    padding: { top: 2, right: 8, bottom: 2, left: 6 }
+                },
+                xaxis: {
+                    categories: categories,
+                    axisBorder: { show: true, color: strokeColor, height: 1.5 },
+                    axisTicks: { show: true, color: strokeColor },
+                    labels: {
+                        offsetY: -2,
+                        style: {
+                            colors: textColor,
+                            fontSize: appState.itemPredictionActive ? '7.5px' : '8.5px',
+                            fontWeight: 700,
+                            fontFamily: "'JetBrains Mono', monospace"
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: val => val !== null && val !== undefined ? formatChartValue(val) : '',
+                        style: {
+                            colors: textColor,
+                            fontSize: '8.5px',
+                            fontFamily: "'JetBrains Mono', monospace",
+                            fontWeight: 700
+                        }
+                    }
+                },
+                tooltip: {
+                    theme: isDark ? 'dark' : 'light',
+                    shared: true,
+                    intersect: false,
+                    y: {
+                        formatter: (val, opts) => {
+                            if (val === null || val === undefined) return '';
+                            if (Array.isArray(val)) {
+                                if (val[0] === val[1]) return '';
+                                return `${formatChartValue(val[0])} — ${formatChartValue(val[1])}`;
+                            }
+                            const formatted = formatChartValue(val);
+                            if (pred && opts && typeof opts.dataPointIndex === 'number' && opts.dataPointIndex >= 7) {
+                                const hIdx = opts.dataPointIndex - 7;
+                                const horizon = pred.horizons[hIdx];
+                                const predLineIdx = itemValArray ? 3 : 2;
+                                if (horizon && opts.seriesIndex === predLineIdx) {
+                                    return `${formatted} (P↑: ${horizon.Pup}%)`;
+                                }
+                            }
+                            return formatted;
+                        }
+                    },
+                    style: {
+                        fontFamily: "'JetBrains Mono', monospace"
+                    }
+                }
+            };
+
+            if (itemChartInstance) {
+                itemChartInstance.destroy();
+                itemChartInstance = null;
+            }
+
+            setTimeout(() => {
+                if (!document.getElementById('item-modal').classList.contains('active')) return;
+                itemChartInstance = new ApexCharts(chartContainer, options);
+                itemChartInstance.render();
+            }, 60);
+        }
+
+        let currentModalItem = null;
+        const clientResaleCache = {};
+
+        function renderSalesPill(salesPerDay) {
+            const salesPill = document.getElementById('item-stat-sales');
+            if (!salesPill) return;
+
+            const val = typeof salesPerDay === 'number' && !isNaN(salesPerDay) ? salesPerDay : null;
+            if (val === null) {
+                salesPill.className = 'modal-sales-pill';
+                salesPill.innerText = '-- / DAY';
+                return;
+            }
+
+            let formattedVal;
+            if (val === 0) formattedVal = '0.0';
+            else if (val < 1.0) formattedVal = val.toFixed(2);
+            else formattedVal = val >= 10 ? val.toFixed(1) : val.toFixed(2);
+
+            const isUnderOne = val < 1.0;
+
+            if (isUnderOne) {
+                // Red indicator pill when sales velocity is under 1 (< 1 / day)
+                salesPill.className = 'modal-sales-pill sales-under-one';
+                salesPill.title = `Low sales volume: ${formattedVal} sales per day (< 1 / day)`;
+                salesPill.innerText = `${formattedVal} / DAY`;
+            } else {
+                salesPill.className = 'modal-sales-pill sales-normal';
+                salesPill.title = `Active sales volume: ${formattedVal} sales per day`;
+                salesPill.innerText = `${formattedVal} / DAY`;
+            }
+        }
+
+        function updateSalesPerDay(item) {
+            if (!item || !item.assetId) return;
+
+            // Check client cache first
+            if (clientResaleCache[item.assetId] !== undefined) {
+                renderSalesPill(clientResaleCache[item.assetId]);
+                return;
+            }
+
+            // Neutral placeholder while fetching authentic Roblox market data
+            renderSalesPill(null);
+
+            // Fetch authentic date-windowed 30-day average from /resale endpoint
+            fetch(`/resale?assetId=${item.assetId}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && typeof data.salesPerDay === 'number') {
+                        clientResaleCache[item.assetId] = data.salesPerDay;
+                        if (currentModalItem && currentModalItem.assetId === item.assetId) {
+                            renderSalesPill(data.salesPerDay);
+                            if (appState.itemPredictionActive) {
+                                renderItemChart(currentModalItem);
+                            }
+                        }
+                    } else {
+                        clientResaleCache[item.assetId] = 0.0;
+                        if (currentModalItem && currentModalItem.assetId === item.assetId) {
+                            renderSalesPill(0.0);
+                            if (appState.itemPredictionActive) {
+                                renderItemChart(currentModalItem);
+                            }
+                        }
+                    }
+                })
+                .catch(e => {
+                    console.warn('Resale API error:', e);
+                    clientResaleCache[item.assetId] = 0.0;
+                    if (currentModalItem && currentModalItem.assetId === item.assetId) {
+                        renderSalesPill(0.0);
+                        if (appState.itemPredictionActive) {
+                            renderItemChart(currentModalItem);
+                        }
+                    }
+                });
+        }
+
+        function openItemModal(item) {
+            if (!item) return;
+            currentModalItem = item;
+
+            const idTag = document.getElementById('item-modal-id-tag');
+            if (idTag) idTag.innerText = `ID: ${item.assetId}`;
+
+            const titleEl = document.getElementById('item-modal-title');
+            if (titleEl) titleEl.innerText = item.name || 'Unknown Item';
+
+            const thumbEl = document.getElementById('item-modal-thumb');
+            if (thumbEl) {
+                thumbEl.src = item.image || '/favicon.svg';
+                thumbEl.alt = item.name || 'Item Thumbnail';
+            }
+
+            // Tags overlay
+            const tagsOverlay = document.getElementById('item-modal-tags');
+            if (tagsOverlay) {
+                let tagHtml = item.serial
+                    ? `<div class="tag-limited-group"><span class="tag-limited">LIMITED</span><span class="tag-u-box">U</span></div><div class="tag-serial">#${item.serial}</div>`
+                    : `<div class="tag-limited-group"><span class="tag-limited">LIMITED</span></div>`;
+                tagsOverlay.innerHTML = tagHtml;
+            }
+
+            // Projected Warning Banner
+            const projEl = document.getElementById('item-modal-projected');
+            if (projEl) projEl.style.display = item.isProjected ? 'flex' : 'none';
+
+            // Currency icons toggle
+            const modalRobuxIcons = document.querySelectorAll('.item-stat-card .robux-icon-svg');
+            modalRobuxIcons.forEach(icon => {
+                icon.style.display = appState.currency === 'RBX' ? 'inline-block' : 'none';
+            });
+
+            // Stat 1: Current RAP
+            const price = Number(item.price) || 0;
+            const rapEl = document.getElementById('item-stat-rap');
+            if (rapEl) rapEl.innerText = formatValue(price);
+
+            // Stat 2: Rolimons Value
+            const valAmountEl = document.getElementById('item-stat-val-amount');
+            const valBadgeEl = document.getElementById('item-stat-value-badge');
+            const valRobuxIcon = valAmountEl?.parentElement?.querySelector('.robux-icon-svg');
+            if (valAmountEl && valBadgeEl) {
+                if (item.value && item.value > 0) {
+                    valAmountEl.innerText = formatValue(item.value);
+                    valBadgeEl.innerText = 'VALUED';
+                    valBadgeEl.className = 'item-stat-pill pill-valued';
+                    if (valRobuxIcon) valRobuxIcon.style.display = appState.currency === 'RBX' ? 'inline-block' : 'none';
+                } else {
+                    valAmountEl.innerText = '—';
+                    valBadgeEl.innerText = 'UNASSIGNED';
+                    valBadgeEl.className = 'item-stat-pill pill-unassigned';
+                    if (valRobuxIcon) valRobuxIcon.style.display = 'none';
+                }
+            }
+
+            // Stat 3: Demand
+            const demandEl = document.getElementById('item-stat-demand');
+            if (demandEl) {
+                const demand = (item.demand || 'Unknown').toUpperCase();
+                demandEl.innerText = demand;
+                demandEl.className = `modal-demand-pill demand-${demand.toLowerCase()}`;
+            }
+
+            // Stat 3 (Right): Sales Per Day with under-1 red indicator
+            updateSalesPerDay(item);
+
+            // Stat 4: Trend
+            const trendEl = document.getElementById('item-stat-trend');
+            if (trendEl) {
+                const trend = item.trend || 'None';
+                let iconSvg = '';
+                if (trend === 'Raising') {
+                    iconSvg = '<svg viewBox="0 0 12 12" class="trend-icon-svg"><polyline points="2,8 6,3 10,8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"/></svg>';
+                } else if (trend === 'Stable') {
+                    iconSvg = '<svg viewBox="0 0 12 12" class="trend-icon-svg"><line x1="2" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg>';
+                } else if (trend === 'Lowering') {
+                    iconSvg = '<svg viewBox="0 0 12 12" class="trend-icon-svg"><polyline points="2,4 6,9 10,4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"/></svg>';
+                } else if (trend === 'Fluctuating') {
+                    iconSvg = '<svg viewBox="0 0 12 12" class="trend-icon-svg"><polyline points="7,1 2,7 6,7 5,11 10,5 6,5 7,1" fill="currentColor"/></svg>';
+                } else if (trend === 'Unstable') {
+                    iconSvg = '<svg viewBox="0 0 12 12" class="trend-icon-svg"><circle cx="6" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+                }
+
+                trendEl.innerHTML = `${iconSvg}<span>${trend.toUpperCase()}</span>`;
+                trendEl.className = `modal-trend-pill trend-${trend.toLowerCase()}`;
+            }
+
+            // Stat 5: Portfolio Share (Evaluated against Rolimons Value if available)
+            const totalNet = (appState.data?.hasRolimonsValue && appState.data?.value && appState.data.value > 0)
+                ? appState.data.value
+                : (appState.data?.networth || 0);
+            const itemVal = (item.value && Number(item.value) > 0) ? Number(item.value) : price;
+            const sharePct = totalNet > 0 ? ((itemVal / totalNet) * 100).toFixed(1) : '0.0';
+            const sharePctEl = document.getElementById('item-stat-share-pct');
+            if (sharePctEl) sharePctEl.innerText = `${sharePct}%`;
+            const shareBarEl = document.getElementById('item-stat-share-bar');
+            if (shareBarEl) shareBarEl.style.width = `${Math.min(100, Math.max(0, sharePct))}%`;
+
+            // Show Modal and Render 1-Week Visual Chart
+            document.getElementById('item-modal').classList.add('active');
+            renderItemChart(item);
+        }
+
+        function closeItemModal() {
+            document.getElementById('item-modal').classList.remove('active');
+            appState.itemPredictionActive = false;
+            const predBtn = document.getElementById('btn-item-predict');
+            const predBtnText = document.getElementById('item-predict-btn-text');
+            const predDossier = document.getElementById('item-predict-dossier');
+            const chartTitle = document.getElementById('item-chart-title');
+            if (predBtn) predBtn.classList.remove('active');
+            if (predBtnText) predBtnText.innerText = 'PREDICT 7D';
+            if (predDossier) predDossier.classList.add('hidden');
+            if (chartTitle) chartTitle.innerText = 'GRAFIK 1 MINGGU TERAKHIR';
+            if (itemChartInstance) {
+                itemChartInstance.destroy();
+                itemChartInstance = null;
+            }
+        }
+
+        function copyModalAssetId() {
+            const rawId = currentModalItem?.assetId || (document.getElementById('item-modal-id-tag')?.innerText || '').replace(/\D/g, '');
+            if (!rawId) return;
+            navigator.clipboard.writeText(String(rawId)).then(() => {
+                showRateToast('ASSET ID COPIED: ' + rawId);
+            }).catch(() => {
+                showRateToast('ID: ' + rawId);
+            });
+        }
+
         // Toast Helper
         let toastTimer = null;
         function showRateToast(msg) {
@@ -778,6 +2162,10 @@
         }
 
         // Event Listeners for Keyboard and Backdrop
+        document.getElementById('item-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'item-modal') closeItemModal();
+        });
+
         document.getElementById('rate-modal').addEventListener('click', (e) => {
             if (e.target.id === 'rate-modal') closeRateModal();
         });
@@ -788,6 +2176,7 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                closeItemModal();
                 closeRateModal();
                 closeErrorModal();
             }
