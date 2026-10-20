@@ -1,7 +1,7 @@
 /**
  * ACCNET // CONSTRUCTIVIST & GEOMETRIC BLUEPRINT CANVAS
  * - Architectural Coordinate Blueprint Grid
- * - Parallax Proun Geometric Floating Solids
+ * - Autonomous Random Floating Proun Geometric Solids
  */
 
 class ConstructivistBlueprintCanvas {
@@ -12,21 +12,90 @@ class ConstructivistBlueprintCanvas {
         this.dpr = Math.min(window.devicePixelRatio || 1, 2);
         this.width = 0;
         this.height = 0;
-        this.mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, isInside: false };
         this.time = 0;
 
-        // Abstract Proun solids floating in space
+        // Abstract Proun solids floating randomly in space
         this.solids = [
-            // Acute Carmine Red Wedge
-            { type: 'wedge', xRatio: 0.12, yRatio: 0.25, size: 140, angle: -0.38, rotSpeed: 0.0008, color: '#E62B1E' },
+            // Acute Constructivist Blue Wedge
+            {
+                type: 'wedge',
+                xRatio: 0.12,
+                yRatio: 0.25,
+                size: 140,
+                angle: -0.38,
+                rotSpeed: 0.0008,
+                color: '#0084DD',
+                floatSpeedX: 0.32,
+                floatSpeedY: 0.38,
+                floatAmpX: 45,
+                floatAmpY: 35,
+                phaseX: 0.7,
+                phaseY: 2.1
+            },
             // Suprematist Carbon Black Frame
-            { type: 'box', xRatio: 0.88, yRatio: 0.20, size: 90, angle: 0.24, rotSpeed: -0.0006, color: '#121314' },
-            // Ochre Gold Caliper Arc Sector
-            { type: 'circle', xRatio: 0.85, yRatio: 0.75, size: 110, angle: 0, rotSpeed: 0.0012, color: '#E5A91A' },
+            {
+                type: 'box',
+                xRatio: 0.88,
+                yRatio: 0.20,
+                size: 90,
+                angle: 0.24,
+                rotSpeed: -0.0006,
+                color: '#121314',
+                floatSpeedX: 0.26,
+                floatSpeedY: 0.34,
+                floatAmpX: 38,
+                floatAmpY: 48,
+                phaseX: 3.2,
+                phaseY: 1.4
+            },
+            // Electric Cyan Caliper Arc Sector
+            {
+                type: 'circle',
+                xRatio: 0.85,
+                yRatio: 0.75,
+                size: 110,
+                angle: 0,
+                rotSpeed: 0.0012,
+                color: '#00B4D8',
+                floatSpeedX: 0.40,
+                floatSpeedY: 0.28,
+                floatAmpX: 50,
+                floatAmpY: 40,
+                phaseX: 1.8,
+                phaseY: 4.2
+            },
             // Industrial Diagonal Girder
-            { type: 'beam', xRatio: 0.08, yRatio: 0.80, length: 280, angle: -0.78, rotSpeed: 0.0004, color: '#E62B1E' },
+            {
+                type: 'beam',
+                xRatio: 0.08,
+                yRatio: 0.80,
+                length: 280,
+                angle: -0.78,
+                rotSpeed: 0.0004,
+                color: '#0084DD',
+                floatSpeedX: 0.22,
+                floatSpeedY: 0.25,
+                floatAmpX: 32,
+                floatAmpY: 36,
+                phaseX: 5.0,
+                phaseY: 0.6
+            },
             // Constructivist Cross Tick
-            { type: 'cross', xRatio: 0.50, yRatio: 0.08, size: 40, angle: 0.15, rotSpeed: 0.0005, color: '#85898E' }
+            {
+                type: 'cross',
+                xRatio: 0.50,
+                yRatio: 0.08,
+                size: 40,
+                angle: 0.15,
+                rotSpeed: 0.0005,
+                color: '#85898E',
+                floatSpeedX: 0.36,
+                floatSpeedY: 0.44,
+                floatAmpX: 38,
+                floatAmpY: 30,
+                phaseX: 2.5,
+                phaseY: 3.8
+            }
         ];
 
         this.init();
@@ -35,28 +104,6 @@ class ConstructivistBlueprintCanvas {
     init() {
         this.resize();
         window.addEventListener('resize', () => this.resize());
-
-        window.addEventListener('mousemove', (e) => {
-            this.mouse.targetX = e.clientX;
-            this.mouse.targetY = e.clientY;
-            this.mouse.isInside = true;
-        });
-
-        window.addEventListener('mouseleave', () => {
-            this.mouse.isInside = false;
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches && e.touches[0]) {
-                this.mouse.targetX = e.touches[0].clientX;
-                this.mouse.targetY = e.touches[0].clientY;
-                this.mouse.isInside = true;
-            }
-        }, { passive: true });
-
-        window.addEventListener('touchend', () => {
-            this.mouse.isInside = false;
-        }, { passive: true });
 
         const loop = (t) => {
             this.time = t * 0.001;
@@ -79,12 +126,9 @@ class ConstructivistBlueprintCanvas {
 
     render() {
         const ctx = this.ctx;
-        const gridColor = 'rgba(18, 19, 20, 0.06)';
-        const tickColor = 'rgba(18, 19, 20, 0.22)';
-
-        // Smooth mouse lerping
-        this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.12;
-        this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.12;
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(18, 19, 20, 0.06)';
+        const tickColor = isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(18, 19, 20, 0.22)';
 
         ctx.clearRect(0, 0, this.width, this.height);
 
@@ -128,21 +172,31 @@ class ConstructivistBlueprintCanvas {
             }
         }
 
-        // 3. Parallax Floating Proun Solids
-        const mouseParallaxX = (this.mouse.x - this.width / 2) * 0.025;
-        const mouseParallaxY = (this.mouse.y - this.height / 2) * 0.025;
-
+        // 3. Autonomous Random Floating Proun Solids
         this.solids.forEach((solid) => {
             ctx.save();
-            const posX = (this.width * solid.xRatio) + mouseParallaxX;
-            const posY = (this.height * solid.yRatio) + mouseParallaxY;
+
+            // Aperiodic harmonic floating trajectory (smooth, organic random drift)
+            const floatX = Math.sin(this.time * solid.floatSpeedX + solid.phaseX) * solid.floatAmpX
+                         + Math.cos(this.time * solid.floatSpeedX * 0.61 + solid.phaseY) * (solid.floatAmpX * 0.45);
+            const floatY = Math.cos(this.time * solid.floatSpeedY + solid.phaseY) * solid.floatAmpY
+                         + Math.sin(this.time * solid.floatSpeedY * 0.73 + solid.phaseX) * (solid.floatAmpY * 0.45);
+
+            const posX = (this.width * solid.xRatio) + floatX;
+            const posY = (this.height * solid.yRatio) + floatY;
             const currentAngle = solid.angle + (this.time * solid.rotSpeed * 10);
 
             ctx.translate(posX, posY);
             ctx.rotate(currentAngle);
 
+            let solidColor = solid.color;
+            if (isDark) {
+                if (solidColor === '#121314') solidColor = '#94A3B8';
+                else if (solidColor === '#85898E') solidColor = '#CBD5E1';
+            }
+
             if (solid.type === 'wedge') {
-                ctx.fillStyle = solid.color;
+                ctx.fillStyle = solidColor;
                 ctx.globalAlpha = 0.16;
                 ctx.beginPath();
                 ctx.moveTo(0, -solid.size * 0.8);
@@ -151,13 +205,13 @@ class ConstructivistBlueprintCanvas {
                 ctx.closePath();
                 ctx.fill();
 
-                ctx.strokeStyle = solid.color;
+                ctx.strokeStyle = solidColor;
                 ctx.lineWidth = 2;
                 ctx.globalAlpha = 0.45;
                 ctx.stroke();
 
             } else if (solid.type === 'box') {
-                ctx.strokeStyle = solid.color;
+                ctx.strokeStyle = solidColor;
                 ctx.lineWidth = 2;
                 ctx.globalAlpha = 0.35;
                 ctx.strokeRect(-solid.size / 2, -solid.size / 2, solid.size, solid.size);
@@ -168,7 +222,7 @@ class ConstructivistBlueprintCanvas {
                 ctx.stroke();
 
             } else if (solid.type === 'circle') {
-                ctx.strokeStyle = solid.color;
+                ctx.strokeStyle = solidColor;
                 ctx.lineWidth = 1.5;
                 ctx.globalAlpha = 0.30;
                 ctx.beginPath();
@@ -181,7 +235,7 @@ class ConstructivistBlueprintCanvas {
                 ctx.stroke();
 
             } else if (solid.type === 'beam') {
-                ctx.strokeStyle = solid.color;
+                ctx.strokeStyle = solidColor;
                 ctx.lineWidth = 3;
                 ctx.globalAlpha = 0.25;
                 ctx.beginPath();
@@ -198,7 +252,7 @@ class ConstructivistBlueprintCanvas {
                 }
 
             } else if (solid.type === 'cross') {
-                ctx.strokeStyle = solid.color;
+                ctx.strokeStyle = solidColor;
                 ctx.lineWidth = 2;
                 ctx.globalAlpha = 0.4;
                 ctx.beginPath();
