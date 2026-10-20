@@ -2,6 +2,7 @@
   <img src="public/favicon.svg" alt="ACCNET Logo" width="120">
   <h1>accnet.</h1>
   <p>
+    <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript">
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License: MIT"></a>
   </p>
 </div>
