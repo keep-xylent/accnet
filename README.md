@@ -36,10 +36,7 @@
 > 
 > Seluruh proses penarikan data sepenuhnya aman karena hanya bergantung pada API publik resmi untuk membaca inventaris yang bersifat terbuka (*public inventory*).
 
-## Lisensi & Penafian (Disclaimer)
+## Lisensi
 
 Proyek ini didistribusikan di bawah lisensi [MIT](LICENSE).
-
-> **Catatan Penafian**:  
-> Roblox adalah merek dagang terdaftar milik **Roblox Corporation**. Proyek **accnet.** dikembangkan secara independen oleh [keep-xylent](https://github.com/keep-xylent) untuk tujuan edukasi dan analitik komunitas, serta tidak terafiliasi, didukung, atau disponsori oleh Roblox Corporation maupun Rolimons.
 
