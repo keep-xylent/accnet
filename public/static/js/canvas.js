@@ -126,9 +126,8 @@ class ConstructivistBlueprintCanvas {
 
     render() {
         const ctx = this.ctx;
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const gridColor = isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(18, 19, 20, 0.06)';
-        const tickColor = isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(18, 19, 20, 0.22)';
+        const gridColor = 'rgba(18, 19, 20, 0.06)';
+        const tickColor = 'rgba(18, 19, 20, 0.22)';
 
         ctx.clearRect(0, 0, this.width, this.height);
 
@@ -190,10 +189,6 @@ class ConstructivistBlueprintCanvas {
             ctx.rotate(currentAngle);
 
             let solidColor = solid.color;
-            if (isDark) {
-                if (solidColor === '#121314') solidColor = '#94A3B8';
-                else if (solidColor === '#85898E') solidColor = '#CBD5E1';
-            }
 
             if (solid.type === 'wedge') {
                 ctx.fillStyle = solidColor;

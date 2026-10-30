@@ -19,17 +19,6 @@
     <!-- ApexCharts for Stepline Charts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <!-- Early theme init to prevent flash of wrong theme (FOUC) -->
-    <script>
-        (function() {
-            try {
-                var savedTheme = localStorage.getItem('accnet_theme');
-                var theme = savedTheme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-                document.documentElement.setAttribute('data-theme', theme);
-            } catch (e) {}
-        })();
-    </script>
-
     <!-- Design System Stylesheet -->
     <link rel="stylesheet" href="/static/css/style.css?v=39">
 </head>
@@ -46,18 +35,6 @@
         <header class="header-bar">
             <div class="brand-section">
                 <div class="branding">accnet<span class="brand-dot"></span></div>
-            </div>
-            <div class="header-tools">
-                <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Dark / Light Mode" title="Ganti Mode Gelap / Terang">
-                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
-                        <circle cx="12" cy="12" r="4" fill="currentColor"></circle>
-                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-                    </svg>
-                    <span id="theme-toggle-text" class="theme-toggle-text">DARK</span>
-                </button>
             </div>
         </header>
 
@@ -506,51 +483,6 @@
 
         const DEFAULT_RATE_IDR = 110;
         const DEFAULT_USD_TO_IDR = 15714.2857; // 110 / 15714.2857 ≈ 0.007
-
-        // Theme Manager (Dark / Light Mode)
-        function getInitialTheme() {
-            try {
-                const saved = localStorage.getItem('accnet_theme');
-                if (saved === 'dark' || saved === 'light') return saved;
-            } catch (e) {}
-            return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-        }
-
-        function applyTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            try {
-                localStorage.setItem('accnet_theme', theme);
-            } catch (e) {
-                console.warn("Could not save theme:", e);
-            }
-            const btn = document.getElementById('theme-toggle-btn');
-            const textEl = document.getElementById('theme-toggle-text');
-            if (textEl) {
-                textEl.innerText = theme === 'dark' ? 'LIGHT' : 'DARK';
-            }
-            if (btn) {
-                btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
-                btn.setAttribute('title', theme === 'dark' ? 'Mode Terang' : 'Mode Gelap');
-            }
-        }
-
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-            const nextTheme = current === 'dark' ? 'light' : 'dark';
-            applyTheme(nextTheme);
-
-            if (appState.data && chartInstance) {
-                const currRate = appState.currency === 'RBX' ? 1 : appState.rates[appState.currency];
-                const chartData = (appState.data.history || []).map(v => Math.round(v * currRate));
-                renderChart(chartData);
-            }
-            if (currentModalItem && itemChartInstance) {
-                renderItemChart(currentModalItem);
-            }
-        }
-
-        // Initialize toggle button state with active theme
-        applyTheme(document.documentElement.getAttribute('data-theme') || getInitialTheme());
 
         let appState = {
             currency: 'RBX',
@@ -1086,13 +1018,12 @@
         let chartInstance = null;
 
         function renderChart(historyData) {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             const strokeColor = '#0084DD';
-            const roliBlueColor = isDark ? '#38BDF8' : '#004E92';
-            const histLineColor = isDark ? '#CBD5E1' : '#121314';
-            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(18, 19, 20, 0.12)';
-            const textColor = isDark ? '#CBD5E1' : '#121314';
-            const markerStroke = isDark ? '#141822' : '#FFFFFF';
+            const roliBlueColor = '#004E92';
+            const histLineColor = '#121314';
+            const gridColor = 'rgba(18, 19, 20, 0.12)';
+            const textColor = '#121314';
+            const markerStroke = '#FFFFFF';
 
             document.getElementById('chart-currency-badge').innerText = appState.currency;
 
@@ -1405,7 +1336,7 @@
                     }
                 },
                 tooltip: {
-                    theme: isDark ? 'dark' : 'light',
+                    theme: 'light',
                     shared: true,
                     intersect: false,
                     y: {
@@ -1596,13 +1527,12 @@
             const chartContainer = document.querySelector("#item-rap-chart");
             if (!chartContainer) return;
 
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             const strokeColor = '#0084DD';
-            const roliBlueColor = isDark ? '#38BDF8' : '#004E92';
-            const histLineColor = isDark ? '#CBD5E1' : '#121314';
-            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(18, 19, 20, 0.12)';
-            const textColor = isDark ? '#CBD5E1' : '#121314';
-            const markerStroke = isDark ? '#141822' : '#FFFFFF';
+            const roliBlueColor = '#004E92';
+            const histLineColor = '#121314';
+            const gridColor = 'rgba(18, 19, 20, 0.12)';
+            const textColor = '#121314';
+            const markerStroke = '#FFFFFF';
 
             const predBtn = document.getElementById('btn-item-predict');
             const predBtnText = document.getElementById('item-predict-btn-text');
@@ -1895,7 +1825,7 @@
                     }
                 },
                 tooltip: {
-                    theme: isDark ? 'dark' : 'light',
+                    theme: 'light',
                     shared: true,
                     intersect: false,
                     y: {
