@@ -26,12 +26,16 @@ export async function onRequestGet(context) {
     }
 
     try {
-        const robloxRes = await fetch(`https://economy.roblox.com/v1/assets/${assetId}/resale-data`, {
-            headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "Accept": "application/json"
-            }
-        });
+        const headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json"
+        };
+
+        // Try RoProxy first (bypasses Cloudflare Worker datacenter IP block)
+        let robloxRes = await fetch(`https://economy.roproxy.com/v1/assets/${assetId}/resale-data`, { headers });
+        if (!robloxRes.ok && robloxRes.status !== 400 && robloxRes.status !== 404) {
+            robloxRes = await fetch(`https://economy.roblox.com/v1/assets/${assetId}/resale-data`, { headers });
+        }
 
         if (!robloxRes.ok) {
             // Items with no active resale or non-resellable return 400/404 from Roblox

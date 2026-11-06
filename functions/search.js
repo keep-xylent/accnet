@@ -1,11 +1,29 @@
-// Standard Browser Headers to prevent Cloudflare/Roblox bot-reputation blocks (403 Forbidden)
+// Clean headers for Roblox & RoProxy requests (Server-to-Server)
+// NOTE: We strictly omit "Origin" and "Referer" because they trigger Roblox CSRF/CORS 403 blocks
 const ROBLOX_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Origin": "https://www.roblox.com",
-    "Referer": "https://www.roblox.com/"
+    "Accept-Language": "en-US,en;q=0.9"
 };
+
+// Resilient fetch helper with automatic Roblox CSRF token recovery
+async function resilientFetch(url, options = {}) {
+    const headers = {
+        ...ROBLOX_HEADERS,
+        ...(options.headers || {})
+    };
+
+    let res = await fetch(url, { ...options, headers });
+
+    // If Roblox challenges with a CSRF token (HTTP 403 with x-csrf-token response header)
+    if (res.status === 403 && res.headers && res.headers.get("x-csrf-token")) {
+        const csrfToken = res.headers.get("x-csrf-token");
+        headers["x-csrf-token"] = csrfToken;
+        res = await fetch(url, { ...options, headers });
+    }
+
+    return res;
+}
 
 // Simple random seeded generator to match Python's random.seed behavior
 function seededRandom(seed) {
@@ -49,73 +67,144 @@ async function getRolimonsItems() {
     return cachedRolimonsData || {};
 }
 
-// Resilient Roblox User Resolver with multi-tier fallbacks
+// Resilient Roblox User Resolver with multi-tier fallbacks (RoProxy -> Roblox direct, username, ID, and keyword search)
 async function resolveRobloxUser(username) {
     const cleanUsername = String(username).trim();
+    if (!cleanUsername) return null;
 
-    // 1. Primary: POST https://users.roblox.com/v1/usernames/users
-    try {
-        const userRes = await fetch("https://users.roblox.com/v1/usernames/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                ...ROBLOX_HEADERS
-            },
-            body: JSON.stringify({ usernames: [cleanUsername], excludeBannedUsers: false })
-        });
-
-        if (userRes.ok) {
-            const userData = await userRes.json();
-            if (userData && userData.data && userData.data.length > 0) {
-                return userData.data[0];
+    // A. Check if input is a numeric User ID
+    if (/^\d+$/.test(cleanUsername)) {
+        const numId = cleanUsername;
+        // Try RoProxy first (bypasses Cloudflare Workers datacenter IP blocks)
+        try {
+            const res = await resilientFetch(`https://users.roproxy.com/v1/users/${numId}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.id) {
+                    return {
+                        id: data.id,
+                        name: data.name,
+                        displayName: data.displayName || data.name
+                    };
+                }
             }
-        } else {
-            console.warn(`Primary user lookup returned ${userRes.status}`);
+        } catch (e) {
+            console.warn("RoProxy user ID lookup failed:", e);
         }
-    } catch (err) {
-        console.warn("Primary user lookup network exception:", err);
+
+        // Try Roblox direct
+        try {
+            const res = await resilientFetch(`https://users.roblox.com/v1/users/${numId}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.id) {
+                    return {
+                        id: data.id,
+                        name: data.name,
+                        displayName: data.displayName || data.name
+                    };
+                }
+            }
+        } catch (e) {
+            console.warn("Roblox user ID lookup failed:", e);
+        }
     }
 
-    // 2. Secondary Fallback: GET https://users.roblox.com/v1/users/search (bypasses POST WAF/CSRF restrictions)
+    // B. Exact Username Lookup (POST /v1/usernames/users)
+    // 1. RoProxy POST
     try {
-        const searchRes = await fetch(`https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(cleanUsername)}&limit=10`, {
-            headers: ROBLOX_HEADERS
-        });
-
-        if (searchRes.ok) {
-            const searchData = await searchRes.json();
-            if (searchData && searchData.data && searchData.data.length > 0) {
-                const exact = searchData.data.find(u => u.name.toLowerCase() === cleanUsername.toLowerCase()) || searchData.data[0];
-                return {
-                    id: exact.id,
-                    name: exact.name,
-                    displayName: exact.displayName || exact.name
-                };
-            }
-        }
-    } catch (err) {
-        console.warn("Secondary search lookup network exception:", err);
-    }
-
-    // 3. Tertiary Fallback: RoProxy (for Cloudflare Workers datacenter IP unblocking)
-    try {
-        const proxyRes = await fetch("https://users.roproxy.com/v1/usernames/users", {
+        const proxyRes = await resilientFetch("https://users.roproxy.com/v1/usernames/users", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                ...ROBLOX_HEADERS
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ usernames: [cleanUsername], excludeBannedUsers: false })
         });
 
         if (proxyRes.ok) {
             const pData = await proxyRes.json();
-            if (pData && pData.data && pData.data.length > 0) {
+            if (pData && Array.isArray(pData.data) && pData.data.length > 0) {
                 return pData.data[0];
             }
+        } else {
+            console.warn(`RoProxy usernames POST returned status: ${proxyRes.status}`);
         }
     } catch (err) {
         console.warn("RoProxy user lookup exception:", err);
+    }
+
+    // 2. Roblox Direct POST
+    try {
+        const userRes = await resilientFetch("https://users.roblox.com/v1/usernames/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ usernames: [cleanUsername], excludeBannedUsers: false })
+        });
+
+        if (userRes.ok) {
+            const userData = await userRes.json();
+            if (userData && Array.isArray(userData.data) && userData.data.length > 0) {
+                return userData.data[0];
+            }
+        } else {
+            console.warn(`Primary Roblox user lookup returned status: ${userRes.status}`);
+        }
+    } catch (err) {
+        console.warn("Primary user lookup network exception:", err);
+    }
+
+    // C. Search Fallback (GET /v1/users/search)
+    // Catches Display Names, casing differences, or when POST is blocked
+    // 3. RoProxy Search GET
+    try {
+        const searchRes = await resilientFetch(
+            `https://users.roproxy.com/v1/users/search?keyword=${encodeURIComponent(cleanUsername)}&limit=10`
+        );
+
+        if (searchRes.ok) {
+            const searchData = await searchRes.json();
+            if (searchData && Array.isArray(searchData.data) && searchData.data.length > 0) {
+                const lower = cleanUsername.toLowerCase();
+                const matched = searchData.data.find(u => (u.name || "").toLowerCase() === lower)
+                    || searchData.data.find(u => (u.displayName || "").toLowerCase() === lower)
+                    || searchData.data[0];
+
+                if (matched && matched.id) {
+                    return {
+                        id: matched.id,
+                        name: matched.name,
+                        displayName: matched.displayName || matched.name
+                    };
+                }
+            }
+        }
+    } catch (err) {
+        console.warn("RoProxy user search exception:", err);
+    }
+
+    // 4. Roblox Direct Search GET
+    try {
+        const searchRes = await resilientFetch(
+            `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(cleanUsername)}&limit=10`
+        );
+
+        if (searchRes.ok) {
+            const searchData = await searchRes.json();
+            if (searchData && Array.isArray(searchData.data) && searchData.data.length > 0) {
+                const lower = cleanUsername.toLowerCase();
+                const matched = searchData.data.find(u => (u.name || "").toLowerCase() === lower)
+                    || searchData.data.find(u => (u.displayName || "").toLowerCase() === lower)
+                    || searchData.data[0];
+
+                if (matched && matched.id) {
+                    return {
+                        id: matched.id,
+                        name: matched.name,
+                        displayName: matched.displayName || matched.name
+                    };
+                }
+            }
+        }
+    } catch (err) {
+        console.warn("Roblox direct search exception:", err);
     }
 
     return null;
@@ -204,9 +293,10 @@ export async function onRequestPost(context) {
         // 2. Fetch Avatar Headshot
         let avatarUrl = "";
         try {
-            const thumbRes = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`, {
-                headers: ROBLOX_HEADERS
-            });
+            let thumbRes = await resilientFetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`);
+            if (!thumbRes.ok) {
+                thumbRes = await resilientFetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`);
+            }
             if (thumbRes.ok) {
                 const thumbData = await thumbRes.json();
                 avatarUrl = thumbData.data?.[0]?.imageUrl || "";
@@ -214,14 +304,43 @@ export async function onRequestPost(context) {
         } catch (e) {
             console.warn("Avatar headshot fetch failed:", e);
         }
+        if (!avatarUrl) {
+            avatarUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=150&height=150&format=png`;
+        }
 
         // 3. Fetch Limited Items (Collectibles)
-        let limitedRes = await fetch(`https://inventory.roblox.com/v1/users/${userId}/assets/collectibles?limit=100`, {
-            headers: ROBLOX_HEADERS
-        });
+        let limitedRes = null;
+        let isPrivate = false;
 
-        // 403 Forbidden on Inventory means User has Private Inventory
-        if (limitedRes.status === 403) {
+        // Try RoProxy first (bypasses Cloudflare Worker datacenter IP block)
+        try {
+            limitedRes = await resilientFetch(`https://inventory.roproxy.com/v1/users/${userId}/assets/collectibles?limit=100`);
+            if (limitedRes.status === 403) {
+                isPrivate = true;
+            }
+        } catch (e) {
+            console.warn("RoProxy inventory fetch failed:", e);
+        }
+
+        // If RoProxy wasn't reachable and didn't confirm private, try Roblox direct
+        if (!limitedRes || (!limitedRes.ok && !isPrivate)) {
+            try {
+                const rbRes = await resilientFetch(`https://inventory.roblox.com/v1/users/${userId}/assets/collectibles?limit=100`);
+                if (rbRes.ok) {
+                    limitedRes = rbRes;
+                } else if (rbRes.status === 403) {
+                    const errJson = await rbRes.json().catch(() => null);
+                    if (errJson && (errJson.errors || errJson.message)) {
+                        isPrivate = true;
+                    }
+                }
+            } catch (e) {
+                console.warn("Roblox inventory direct fetch failed:", e);
+            }
+        }
+
+        // Handle private inventory
+        if (isPrivate) {
             const privateResult = {
                 id: userId,
                 name: displayName,
@@ -239,19 +358,7 @@ export async function onRequestPost(context) {
             });
         }
 
-        // Fallback for limited items via RoProxy if inventory is blocked or rate-limited
-        if (!limitedRes.ok) {
-            try {
-                const proxyLim = await fetch(`https://inventory.roproxy.com/v1/users/${userId}/assets/collectibles?limit=100`, {
-                    headers: ROBLOX_HEADERS
-                });
-                if (proxyLim.ok) {
-                    limitedRes = proxyLim;
-                }
-            } catch (e) {}
-        }
-
-        const limitedData = limitedRes.ok ? await limitedRes.json() : { data: [] };
+        const limitedData = (limitedRes && limitedRes.ok) ? await limitedRes.json() : { data: [] };
         const itemsRaw = [];
         let totalNet = 0;
 
@@ -295,9 +402,10 @@ export async function onRequestPost(context) {
         const allIds = itemsRaw.map(i => i.assetId).join(',');
         const assetThumbs = {};
         try {
-            const tRes = await fetch(`https://thumbnails.roblox.com/v1/assets?assetIds=${allIds}&size=420x420&format=Png`, {
-                headers: ROBLOX_HEADERS
-            });
+            let tRes = await resilientFetch(`https://thumbnails.roproxy.com/v1/assets?assetIds=${allIds}&size=420x420&format=Png`);
+            if (!tRes.ok) {
+                tRes = await resilientFetch(`https://thumbnails.roblox.com/v1/assets?assetIds=${allIds}&size=420x420&format=Png`);
+            }
             if (tRes.ok) {
                 const tData = await tRes.json();
                 for (const t of (tData.data || [])) {
