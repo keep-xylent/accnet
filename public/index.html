@@ -598,7 +598,10 @@
 
                 if (!response.ok) {
                     const errJson = await response.json().catch(() => ({}));
-                    throw new Error(errJson.error || "User not found on Roblox network.");
+                    if (response.status >= 500) {
+                        throw new Error(errJson.error || "Server timeout / Roblox API unreachable. Silakan coba kembali dalam beberapa saat.");
+                    }
+                    throw new Error(errJson.error || `User "${username}" not found on Roblox network.`);
                 }
 
                 appState.data = await response.json();
