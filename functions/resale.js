@@ -1,6 +1,9 @@
 // In-memory cache for resale data (15 minutes)
 const resaleCache = new Map();
 
+// Dedicated Deno Deploy reverse proxy (GCP egress IP, bypassing Roblox AS13335 WAF blocks)
+const DENO_PROXY = "https://smart-halibut-3072.keep-xylent.deno.net";
+
 export async function onRequestGet(context) {
     const { request } = context;
     const url = new URL(request.url);
@@ -31,8 +34,11 @@ export async function onRequestGet(context) {
             "Accept": "application/json"
         };
 
-        // Try RoProxy first (bypasses Cloudflare Worker datacenter IP block)
-        let robloxRes = await fetch(`https://economy.roproxy.com/v1/assets/${assetId}/resale-data`, { headers });
+        // Try Deno Proxy first (non-Cloudflare GCP IP, bypasses 429 rate limit blocks)
+        let robloxRes = await fetch(`${DENO_PROXY}/economy/v1/assets/${assetId}/resale-data`, { headers });
+        if (!robloxRes.ok && robloxRes.status !== 400 && robloxRes.status !== 404) {
+            robloxRes = await fetch(`https://economy.roproxy.com/v1/assets/${assetId}/resale-data`, { headers });
+        }
         if (!robloxRes.ok && robloxRes.status !== 400 && robloxRes.status !== 404) {
             robloxRes = await fetch(`https://economy.roblox.com/v1/assets/${assetId}/resale-data`, { headers });
         }

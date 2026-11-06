@@ -6,6 +6,9 @@ const ROBLOX_HEADERS = {
     "Accept-Language": "en-US,en;q=0.9"
 };
 
+// Dedicated Deno Deploy reverse proxy (GCP egress IP, bypassing Roblox AS13335 WAF blocks)
+const DENO_PROXY = "https://smart-halibut-3072.keep-xylent.deno.net";
+
 // Resilient fetch helper with timeout safety and automatic Roblox CSRF token recovery
 async function resilientFetch(url, options = {}, timeoutMs = 4000) {
     const headers = {
@@ -83,7 +86,7 @@ async function getRolimonsItems() {
     return cachedRolimonsData || {};
 }
 
-// Resilient Roblox User Resolver (Roblox Official Primary -> RoProxy Fallback -> Search Keyword Fuzzy Match)
+// Resilient Roblox User Resolver (Deno Primary -> Roblox Direct Fallback -> RoProxy Fallback)
 async function resolveRobloxUser(username, diag = {}) {
     const cleanUsername = String(username).trim();
     if (!cleanUsername) return null;
@@ -91,6 +94,21 @@ async function resolveRobloxUser(username, diag = {}) {
     // A. Check if input is a numeric User ID
     if (/^\d+$/.test(cleanUsername)) {
         const numId = cleanUsername;
+        // 1. Deno proxy
+        try {
+            const res = await resilientFetch(`${DENO_PROXY}/users/v1/users/${numId}`, {}, 3000);
+            diag.numericDeno = { status: res.status, ok: res.ok };
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.id) {
+                    return { id: data.id, name: data.name, displayName: data.displayName || data.name };
+                }
+            }
+        } catch (e) {
+            diag.numericDeno = { error: e.message };
+        }
+
+        // 2. Roblox direct
         try {
             const res = await resilientFetch(`https://users.roblox.com/v1/users/${numId}`, {}, 3000);
             diag.numericRoblox = { status: res.status, ok: res.ok };
@@ -104,6 +122,7 @@ async function resolveRobloxUser(username, diag = {}) {
             diag.numericRoblox = { error: e.message };
         }
 
+        // 3. RoProxy fallback
         try {
             const res = await resilientFetch(`https://users.roproxy.com/v1/users/${numId}`, {}, 3000);
             diag.numericRoProxy = { status: res.status, ok: res.ok };
@@ -119,7 +138,28 @@ async function resolveRobloxUser(username, diag = {}) {
     }
 
     // B. Exact Username Lookup (POST /v1/usernames/users)
-    // 1. Roblox Official Direct
+    // 1. Deno Dedicated Proxy Primary
+    try {
+        const userRes = await resilientFetch(`${DENO_PROXY}/users/v1/usernames/users`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ usernames: [cleanUsername], excludeBannedUsers: false })
+        }, 3500);
+
+        const txt = await userRes.text().catch(() => "");
+        diag.denoPost = { status: userRes.status, ok: userRes.ok, body: txt.slice(0, 150) };
+
+        if (userRes.ok && txt) {
+            const userData = JSON.parse(txt);
+            if (userData && Array.isArray(userData.data) && userData.data.length > 0) {
+                return userData.data[0];
+            }
+        }
+    } catch (err) {
+        diag.denoPost = { error: err.message };
+    }
+
+    // 2. Roblox Official Direct
     try {
         const userRes = await resilientFetch("https://users.roblox.com/v1/usernames/users", {
             method: "POST",
@@ -140,7 +180,7 @@ async function resolveRobloxUser(username, diag = {}) {
         diag.robloxPost = { error: err.message };
     }
 
-    // 2. RoProxy POST Fallback
+    // 3. RoProxy POST Fallback
     try {
         const proxyRes = await resilientFetch("https://users.roproxy.com/v1/usernames/users", {
             method: "POST",
@@ -163,14 +203,22 @@ async function resolveRobloxUser(username, diag = {}) {
 
     // C. Fuzzy Keyword Search (GET /v1/users/search)
     try {
-        const searchRes = await resilientFetch(
-            `https://users.roproxy.com/v1/users/search?keyword=${encodeURIComponent(cleanUsername)}&limit=10`,
+        let searchRes = await resilientFetch(
+            `${DENO_PROXY}/users/v1/users/search?keyword=${encodeURIComponent(cleanUsername)}&limit=10`,
             {},
             3500
         );
 
+        if (!searchRes.ok) {
+            searchRes = await resilientFetch(
+                `https://users.roproxy.com/v1/users/search?keyword=${encodeURIComponent(cleanUsername)}&limit=10`,
+                {},
+                3500
+            );
+        }
+
         const sTxt = await searchRes.text().catch(() => "");
-        diag.roproxySearch = { status: searchRes.status, ok: searchRes.ok, body: sTxt.slice(0, 150) };
+        diag.searchResult = { status: searchRes.status, ok: searchRes.ok, body: sTxt.slice(0, 150) };
 
         if (searchRes.ok && sTxt) {
             const searchData = JSON.parse(sTxt);
@@ -190,7 +238,7 @@ async function resolveRobloxUser(username, diag = {}) {
             }
         }
     } catch (err) {
-        diag.roproxySearch = { error: err.message };
+        diag.searchResult = { error: err.message };
     }
 
     return null;
@@ -280,10 +328,13 @@ export async function onRequestPost(context) {
         const displayName = userInfo.displayName || userInfo.name;
         const actualUsername = userInfo.name;
 
-        // 2. Fetch Avatar Headshot (Roblox Official Primary -> RoProxy Fallback)
+        // 2. Fetch Avatar Headshot (Deno Primary -> Roblox Direct -> RoProxy Fallback)
         let avatarUrl = "";
         try {
-            let thumbRes = await resilientFetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`, {}, 3000);
+            let thumbRes = await resilientFetch(`${DENO_PROXY}/thumbnails/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`, {}, 3000);
+            if (!thumbRes.ok) {
+                thumbRes = await resilientFetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`, {}, 3000);
+            }
             if (!thumbRes.ok) {
                 thumbRes = await resilientFetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`, {}, 3000);
             }
@@ -298,12 +349,12 @@ export async function onRequestPost(context) {
             avatarUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=150&height=150&format=png`;
         }
 
-        // 3. Fetch Limited Items (Collectibles) (Roblox Official Primary -> RoProxy Fallback)
+        // 3. Fetch Limited Items (Collectibles) (Deno Primary -> Roblox Direct -> RoProxy Fallback)
         let limitedRes = null;
         let isPrivate = false;
 
         try {
-            limitedRes = await resilientFetch(`https://inventory.roblox.com/v1/users/${userId}/assets/collectibles?limit=100`, {}, 4000);
+            limitedRes = await resilientFetch(`${DENO_PROXY}/inventory/v1/users/${userId}/assets/collectibles?limit=100`, {}, 4000);
             if (limitedRes.status === 403) {
                 const errJson = await limitedRes.json().catch(() => null);
                 if (errJson && (errJson.errors || errJson.message)) {
@@ -311,7 +362,22 @@ export async function onRequestPost(context) {
                 }
             }
         } catch (e) {
-            console.warn("Roblox inventory fetch failed:", e);
+            console.warn("Deno inventory fetch failed:", e);
+        }
+
+        // If Deno proxy failed or timed out (and not verified private), fallback to Roblox official
+        if (!limitedRes || (!limitedRes.ok && !isPrivate)) {
+            try {
+                limitedRes = await resilientFetch(`https://inventory.roblox.com/v1/users/${userId}/assets/collectibles?limit=100`, {}, 4000);
+                if (limitedRes.status === 403) {
+                    const errJson = await limitedRes.json().catch(() => null);
+                    if (errJson && (errJson.errors || errJson.message)) {
+                        isPrivate = true;
+                    }
+                }
+            } catch (e) {
+                console.warn("Roblox inventory fetch failed:", e);
+            }
         }
 
         // If Roblox blocked or errored (and not verified private), fallback to RoProxy
@@ -387,11 +453,14 @@ export async function onRequestPost(context) {
             });
         }
 
-        // 4. Fetch Asset Thumbnails (Roblox Official Primary -> RoProxy Fallback)
+        // 4. Fetch Asset Thumbnails (Deno Primary -> Roblox Direct -> RoProxy Fallback)
         const allIds = itemsRaw.map(i => i.assetId).join(',');
         const assetThumbs = {};
         try {
-            let tRes = await resilientFetch(`https://thumbnails.roblox.com/v1/assets?assetIds=${allIds}&size=420x420&format=Png`, {}, 3500);
+            let tRes = await resilientFetch(`${DENO_PROXY}/thumbnails/v1/assets?assetIds=${allIds}&size=420x420&format=Png`, {}, 3500);
+            if (!tRes.ok) {
+                tRes = await resilientFetch(`https://thumbnails.roblox.com/v1/assets?assetIds=${allIds}&size=420x420&format=Png`, {}, 3500);
+            }
             if (!tRes.ok) {
                 tRes = await resilientFetch(`https://thumbnails.roproxy.com/v1/assets?assetIds=${allIds}&size=420x420&format=Png`, {}, 3500);
             }
