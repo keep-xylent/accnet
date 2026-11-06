@@ -4,6 +4,26 @@ const resaleCache = new Map();
 // Dedicated Deno Deploy reverse proxy (GCP egress IP, bypassing Roblox AS13335 WAF blocks)
 const DENO_PROXY = "https://smart-halibut-3072.keep-xylent.deno.net";
 
+// Resilient fetch helper with timeout safety
+async function resilientFetch(url, options = {}, timeoutMs = 4000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        return await fetch(url, {
+            ...options,
+            signal: options.signal || controller.signal
+        });
+    } catch (e) {
+        return {
+            ok: false,
+            status: e.name === "AbortError" ? 408 : 500,
+            json: async () => ({ error: e.message })
+        };
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 export async function onRequestGet(context) {
     const { request } = context;
     const url = new URL(request.url);
@@ -35,12 +55,12 @@ export async function onRequestGet(context) {
         };
 
         // Try Deno Proxy first (non-Cloudflare GCP IP, bypasses 429 rate limit blocks)
-        let robloxRes = await fetch(`${DENO_PROXY}/economy/v1/assets/${assetId}/resale-data`, { headers });
+        let robloxRes = await resilientFetch(`${DENO_PROXY}/economy/v1/assets/${assetId}/resale-data`, { headers }, 3500);
         if (!robloxRes.ok && robloxRes.status !== 400 && robloxRes.status !== 404) {
-            robloxRes = await fetch(`https://economy.roproxy.com/v1/assets/${assetId}/resale-data`, { headers });
+            robloxRes = await resilientFetch(`https://economy.roproxy.com/v1/assets/${assetId}/resale-data`, { headers }, 3500);
         }
         if (!robloxRes.ok && robloxRes.status !== 400 && robloxRes.status !== 404) {
-            robloxRes = await fetch(`https://economy.roblox.com/v1/assets/${assetId}/resale-data`, { headers });
+            robloxRes = await resilientFetch(`https://economy.roblox.com/v1/assets/${assetId}/resale-data`, { headers }, 3500);
         }
 
         if (!robloxRes.ok) {
@@ -121,4 +141,15 @@ export async function onRequestGet(context) {
             headers: { "Content-Type": "application/json" }
         });
     }
+}
+
+export async function onRequestOptions() {
+    return new Response(null, {
+        status: 204,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type"
+        }
+    });
 }
