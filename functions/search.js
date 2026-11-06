@@ -84,7 +84,7 @@ async function getRolimonsItems() {
 }
 
 // Resilient Roblox User Resolver (Roblox Official Primary -> RoProxy Fallback -> Search Keyword Fuzzy Match)
-async function resolveRobloxUser(username) {
+async function resolveRobloxUser(username, diag = {}) {
     const cleanUsername = String(username).trim();
     if (!cleanUsername) return null;
 
@@ -93,27 +93,33 @@ async function resolveRobloxUser(username) {
         const numId = cleanUsername;
         try {
             const res = await resilientFetch(`https://users.roblox.com/v1/users/${numId}`, {}, 3000);
+            diag.numericRoblox = { status: res.status, ok: res.ok };
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.id) {
                     return { id: data.id, name: data.name, displayName: data.displayName || data.name };
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            diag.numericRoblox = { error: e.message };
+        }
 
         try {
             const res = await resilientFetch(`https://users.roproxy.com/v1/users/${numId}`, {}, 3000);
+            diag.numericRoProxy = { status: res.status, ok: res.ok };
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.id) {
                     return { id: data.id, name: data.name, displayName: data.displayName || data.name };
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            diag.numericRoProxy = { error: e.message };
+        }
     }
 
     // B. Exact Username Lookup (POST /v1/usernames/users)
-    // 1. Roblox Official Direct (Fastest, ~300ms)
+    // 1. Roblox Official Direct
     try {
         const userRes = await resilientFetch("https://users.roblox.com/v1/usernames/users", {
             method: "POST",
@@ -121,13 +127,18 @@ async function resolveRobloxUser(username) {
             body: JSON.stringify({ usernames: [cleanUsername], excludeBannedUsers: false })
         }, 3500);
 
-        if (userRes.ok) {
-            const userData = await userRes.json();
+        const txt = await userRes.text().catch(() => "");
+        diag.robloxPost = { status: userRes.status, ok: userRes.ok, body: txt.slice(0, 150) };
+
+        if (userRes.ok && txt) {
+            const userData = JSON.parse(txt);
             if (userData && Array.isArray(userData.data) && userData.data.length > 0) {
                 return userData.data[0];
             }
         }
-    } catch (err) {}
+    } catch (err) {
+        diag.robloxPost = { error: err.message };
+    }
 
     // 2. RoProxy POST Fallback
     try {
@@ -137,16 +148,20 @@ async function resolveRobloxUser(username) {
             body: JSON.stringify({ usernames: [cleanUsername], excludeBannedUsers: false })
         }, 3500);
 
-        if (proxyRes.ok) {
-            const pData = await proxyRes.json();
+        const pTxt = await proxyRes.text().catch(() => "");
+        diag.roproxyPost = { status: proxyRes.status, ok: proxyRes.ok, body: pTxt.slice(0, 150) };
+
+        if (proxyRes.ok && pTxt) {
+            const pData = JSON.parse(pTxt);
             if (pData && Array.isArray(pData.data) && pData.data.length > 0) {
                 return pData.data[0];
             }
         }
-    } catch (err) {}
+    } catch (err) {
+        diag.roproxyPost = { error: err.message };
+    }
 
     // C. Fuzzy Keyword Search (GET /v1/users/search)
-    // Catches typos (e.g. iownedantartica -> iownantartica) and display names
     try {
         const searchRes = await resilientFetch(
             `https://users.roproxy.com/v1/users/search?keyword=${encodeURIComponent(cleanUsername)}&limit=10`,
@@ -154,8 +169,11 @@ async function resolveRobloxUser(username) {
             3500
         );
 
-        if (searchRes.ok) {
-            const searchData = await searchRes.json();
+        const sTxt = await searchRes.text().catch(() => "");
+        diag.roproxySearch = { status: searchRes.status, ok: searchRes.ok, body: sTxt.slice(0, 150) };
+
+        if (searchRes.ok && sTxt) {
+            const searchData = JSON.parse(sTxt);
             if (searchData && Array.isArray(searchData.data) && searchData.data.length > 0) {
                 const lower = cleanUsername.toLowerCase();
                 const matched = searchData.data.find(u => (u.name || "").toLowerCase() === lower)
@@ -171,7 +189,9 @@ async function resolveRobloxUser(username) {
                 }
             }
         }
-    } catch (err) {}
+    } catch (err) {
+        diag.roproxySearch = { error: err.message };
+    }
 
     return null;
 }
@@ -244,9 +264,13 @@ export async function onRequestPost(context) {
         }
 
         // 1. Fetch User ID with multi-tier fallback
-        const userInfo = await resolveRobloxUser(username);
+        const diag = {};
+        const userInfo = await resolveRobloxUser(username, diag);
         if (!userInfo) {
-            return new Response(JSON.stringify({ error: `User "${username}" not found or Roblox API unreachable.` }), {
+            return new Response(JSON.stringify({
+                error: `User "${username}" not found or Roblox API unreachable.`,
+                diagnostics: diag
+            }), {
                 status: 404,
                 headers: { "Content-Type": "application/json" }
             });
