@@ -6,31 +6,40 @@
     <title>Admin Console | accnet</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-    <!-- Fonts -->
+    <!-- Fonts (Matches accnet main web) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* Theme Variables (Utilitarian Dark Boxy) */
-            --bg-page: #0d0f12;
-            --bg-card: #15181e;
-            --bg-card-hover: #1b1e26;
-            --bg-input: #0a0c0e;
-            --bg-nav: #111419;
-            --border: #232730;
-            --border-strong: #333846;
-            --border-accent: #0084DD;
-            --text-main: #f3f4f6;
-            --text-muted: #8b929e;
-            --text-subtle: #575e6b;
+            /* Theme Tokens: Identical to accnet main site */
+            --bg-page: #EEF2F6;        /* Cool Architectural Slate Canvas */
+            --bg-surface: #F8FAFD;     /* Crisp Luminous Surface */
+            --bg-card: #FFFFFF;        /* Pure White Card */
+            --bg-card-hover: #F1F5F9;  
+            --bg-input: #FFFFFF;
+            --bg-nav: #FFFFFF;
+            --bg-panel: #E2E8F0;
 
-            --primary: #0084DD;
-            --primary-hover: #006eb8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
+            --border: rgba(18, 19, 20, 0.16);
+            --border-strong: #121314;  /* Dense Carbon Charcoal */
+            --border-accent: #0084DD;  /* Constructivist Vivid Blue */
+
+            --text-main: #121314;      /* Dense Carbon Charcoal */
+            --text-muted: #595D62;     /* Slate Muted */
+            --text-subtle: #85898E;
+
+            --primary: #0084DD;        /* Constructivist Vivid Blue */
+            --primary-hover: #006EB8;
+            --primary-contrast: #FFFFFF;
+
+            --secondary: #121314;
+            --secondary-contrast: #EEF2F6;
+
+            --success: #0D8249;
+            --warning: #D97706;
+            --danger: #DC2626;
 
             /* Spacing & Radii Standards (Wajib Konsisten) */
             --topbar-height: 60px;
@@ -60,6 +69,20 @@
             flex-direction: column;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            position: relative;
+        }
+
+        /* Tactile Grain Overlay matching main site */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.045;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* -------------------------------------------------------------
@@ -71,7 +94,7 @@
             top: 0;
             z-index: 100;
             background-color: var(--bg-nav);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 2px solid var(--border-strong);
             display: flex;
             align-items: center;
             padding: 0 24px;
@@ -96,9 +119,14 @@
 
         .brand-title {
             font-family: var(--font-heading);
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
             letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .brand-dot {
+            color: var(--primary);
         }
 
         .topbar-divider {
@@ -110,7 +138,7 @@
         .topbar-subtitle {
             color: var(--text-muted);
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
@@ -126,17 +154,18 @@
             align-items: center;
             gap: 6px;
             padding: 4px 10px;
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
             font-family: var(--font-mono);
             font-size: 12px;
+            font-weight: 600;
             color: var(--text-main);
         }
 
         .admin-status-dot {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background-color: var(--success);
         }
@@ -149,14 +178,14 @@
             border-radius: var(--radius-sm);
             font-family: var(--font-body);
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: background-color 0.15s ease, border-color 0.15s ease;
         }
 
         .admin-logout-btn:hover {
-            background-color: var(--border);
-            border-color: var(--text-muted);
+            background-color: var(--border-strong);
+            color: #FFFFFF;
         }
 
         /* -------------------------------------------------------------
@@ -168,13 +197,15 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
+            position: relative;
+            z-index: 2;
         }
 
         .admin-spinner {
             width: 24px;
             height: 24px;
-            border: 2.5px solid rgba(127, 127, 127, 0.15);
-            border-top-color: var(--text-main, currentColor);
+            border: 2.5px solid rgba(18, 19, 20, 0.15);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: admin-spin 0.75s linear infinite;
         }
@@ -195,6 +226,8 @@
             text-align: center;
             user-select: none;
             padding: 24px;
+            position: relative;
+            z-index: 2;
         }
 
         .error-code {
@@ -209,10 +242,10 @@
         .error-label {
             margin-top: 8px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: var(--text-muted, #888);
+            color: var(--text-muted, #595D62);
         }
 
         /* -------------------------------------------------------------
@@ -226,6 +259,8 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            position: relative;
+            z-index: 2;
         }
 
         /* Header Band */
@@ -234,7 +269,7 @@
             flex-direction: column;
             gap: 8px;
             padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 2px solid var(--border-strong);
         }
 
         .admin-eyebrow {
@@ -242,8 +277,8 @@
             font-family: var(--font-mono);
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 600;
+            letter-spacing: 0.12em;
+            font-weight: 700;
         }
 
         .admin-title-row {
@@ -256,9 +291,10 @@
 
         .admin-title {
             font-family: var(--font-heading);
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.02em;
+            color: var(--text-main);
         }
 
         .admin-meta-chips {
@@ -271,22 +307,23 @@
         .admin-chip {
             font-family: var(--font-mono);
             font-size: 11px;
+            font-weight: 600;
             padding: 4px 8px;
             background-color: var(--bg-card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
             color: var(--text-muted);
         }
 
         .admin-chip-highlight {
             color: var(--text-main);
-            border-color: var(--border-strong);
+            background-color: var(--bg-surface);
         }
 
-        /* Section Cards */
+        /* Section Cards (Accnet Boxy White Surface) */
         .admin-card {
             background-color: var(--bg-card);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border-strong);
             border-radius: var(--radius-sm);
             padding: 24px;
             display: flex;
@@ -309,8 +346,9 @@
         }
 
         .card-title {
-            font-size: 15px;
-            font-weight: 700;
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-main);
@@ -322,11 +360,12 @@
         .card-badge {
             font-family: var(--font-mono);
             font-size: 10px;
-            background-color: var(--bg-input);
-            border: 1px solid var(--border);
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
             padding: 2px 6px;
             border-radius: var(--radius-sm);
             color: var(--primary);
+            font-weight: 700;
         }
 
         .card-desc {
@@ -361,7 +400,7 @@
 
         .form-label {
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
@@ -373,7 +412,7 @@
             display: flex;
             align-items: center;
             background-color: var(--bg-input);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border-strong);
             border-radius: var(--radius-sm);
             transition: border-color 0.15s ease;
         }
@@ -386,9 +425,10 @@
             padding: 10px 14px;
             font-family: var(--font-mono);
             font-size: 13px;
+            font-weight: 700;
             color: var(--text-muted);
             user-select: none;
-            background-color: var(--bg-page);
+            background-color: var(--bg-surface);
             border-right: 1px solid var(--border);
         }
 
@@ -419,38 +459,38 @@
         .preset-label {
             font-size: 11px;
             font-family: var(--font-mono);
+            font-weight: 700;
             color: var(--text-subtle);
             margin-right: 4px;
         }
 
         .preset-btn {
-            background-color: var(--bg-input);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
             font-family: var(--font-mono);
             font-size: 12px;
-            font-weight: 600;
-            padding: 4px 10px;
+            font-weight: 700;
+            padding: 5px 12px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             transition: all 0.15s ease;
         }
 
         .preset-btn:hover {
-            border-color: var(--border-strong);
-            color: var(--text-main);
+            background-color: var(--bg-panel);
         }
 
         .preset-btn.active {
             background-color: var(--primary);
-            border-color: var(--primary);
-            color: #ffffff;
+            border-color: var(--border-strong);
+            color: #FFFFFF;
         }
 
         /* Live Preview Card */
         .preview-box {
-            background-color: var(--bg-page);
-            border: 1px solid var(--border);
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
             padding: 16px;
             display: flex;
@@ -460,7 +500,7 @@
 
         .preview-box-title {
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: var(--text-subtle);
@@ -477,7 +517,7 @@
             display: flex;
             flex-direction: column;
             gap: 2px;
-            background-color: var(--bg-card);
+            background-color: #FFFFFF;
             border: 1px solid var(--border);
             padding: 10px 12px;
             border-radius: var(--radius-sm);
@@ -485,14 +525,15 @@
 
         .metric-label {
             font-size: 11px;
+            font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
         .metric-value {
             font-family: var(--font-mono);
-            font-size: 15px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 800;
             color: var(--text-main);
         }
 
@@ -507,7 +548,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 12px;
-            padding-top: 8px;
+            padding-top: 12px;
             border-top: 1px solid var(--border);
         }
 
@@ -520,8 +561,8 @@
 
         .btn-primary {
             background-color: var(--primary);
-            border: 1px solid var(--primary);
-            color: #ffffff;
+            border: 2px solid var(--border-strong);
+            color: #FFFFFF;
             font-family: var(--font-body);
             font-size: 13px;
             font-weight: 700;
@@ -536,20 +577,20 @@
         }
 
         .btn-secondary {
-            background-color: transparent;
+            background-color: #FFFFFF;
             border: 1px solid var(--border-strong);
             color: var(--text-main);
             font-family: var(--font-body);
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             padding: 9px 16px;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: background-color 0.15s ease, border-color 0.15s ease;
+            transition: background-color 0.15s ease;
         }
 
         .btn-secondary:hover {
-            background-color: var(--border);
+            background-color: var(--bg-surface);
         }
 
         /* Conversion Simulator Box */
@@ -558,7 +599,7 @@
             grid-template-columns: 1fr 40px 1fr 1fr;
             align-items: center;
             gap: 12px;
-            background-color: var(--bg-page);
+            background-color: var(--bg-surface);
             border: 1px solid var(--border);
             padding: 16px;
             border-radius: var(--radius-sm);
@@ -576,7 +617,8 @@
         .simulator-arrow {
             text-align: center;
             color: var(--text-subtle);
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: bold;
         }
 
         /* Node Diagnostics Grid */
@@ -587,8 +629,8 @@
         }
 
         .node-item {
-            background-color: var(--bg-page);
-            border: 1px solid var(--border);
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
             padding: 14px;
             display: flex;
@@ -615,25 +657,25 @@
             font-size: 10px;
             padding: 2px 6px;
             border-radius: var(--radius-sm);
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .status-online {
-            background-color: rgba(16, 185, 129, 0.15);
+            background-color: rgba(13, 130, 73, 0.12);
             color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(13, 130, 73, 0.4);
         }
 
         .status-pending {
-            background-color: rgba(245, 158, 11, 0.15);
+            background-color: rgba(217, 119, 6, 0.12);
             color: var(--warning);
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            border: 1px solid rgba(217, 119, 6, 0.4);
         }
 
         .status-error {
-            background-color: rgba(239, 68, 68, 0.15);
+            background-color: rgba(220, 38, 38, 0.12);
             color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(220, 38, 38, 0.4);
         }
 
         .node-url {
@@ -651,8 +693,8 @@
 
         /* Audit Log Console */
         .admin-log-box {
-            background-color: var(--bg-input);
-            border: 1px solid var(--border);
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
             padding: 12px;
             max-height: 160px;
@@ -677,6 +719,7 @@
 
         .log-msg-success {
             color: var(--success);
+            font-weight: 700;
         }
 
         .log-msg-info {
@@ -688,13 +731,13 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background-color: var(--bg-nav);
-            border: 1px solid var(--border-strong);
-            color: var(--text-main);
+            background-color: var(--border-strong);
+            color: #FFFFFF;
             padding: 10px 16px;
             border-radius: var(--radius-sm);
             font-family: var(--font-mono);
             font-size: 12px;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -711,15 +754,19 @@
         }
 
         /* Standard Image Fallback (Section 3.D) */
-        .img-fallback-box {
+        .img-fallback-box,
+        img.img-fallback-applied {
             width: 100%;
             height: 100%;
+            object-fit: contain;
+            padding: 14px;
             background-color: var(--bg-card, transparent);
-            border: 1px solid var(--border, rgba(127, 127, 127, 0.2));
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm, 3px);
             display: flex;
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
         }
 
         .img-fallback-svg {
@@ -730,11 +777,14 @@
 </head>
 <body class="admin-page-wrapper">
 
+    <!-- Tactile Grain Overlay -->
+    <div class="grain-overlay"></div>
+
     <!-- Topbar Standard (Section 3.E) -->
     <header class="rbx-topbar">
         <div class="topbar-content">
             <a href="/" class="topbar-brand" aria-label="Brand">
-                <span class="brand-title">accnet</span>
+                <span class="brand-title">accnet<span class="brand-dot">.</span></span>
                 <span class="topbar-divider">/</span>
                 <span class="topbar-subtitle">Admin</span>
             </a>
@@ -764,7 +814,7 @@
         
         <!-- Header Hero Lockup -->
         <div class="admin-header-band">
-            <div class="admin-eyebrow">XLNT Ecosystem &bull; Sub-Project Admin Control</div>
+            <div class="admin-eyebrow">XLNT ECOSYSTEM &bull; ACCNET ADMIN CONSOLE</div>
             <div class="admin-title-row">
                 <h1 class="admin-title" id="welcomeUser">Admin Panel</h1>
                 <div class="admin-meta-chips">
@@ -1252,7 +1302,6 @@
 
             const start = performance.now();
             try {
-                // Use resilient fetch with timeout
                 const controller = new AbortController();
                 const timeout = setTimeout(() => controller.abort(), 6000);
 
