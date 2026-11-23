@@ -3,55 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Console | accnet</title>
+    <title>Admin | accnet</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-    <!-- Fonts (Matches accnet main web) -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=JetBrains+Mono:wght@500;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* Theme Tokens: Identical to accnet main site */
-            --bg-page: #EEF2F6;        /* Cool Architectural Slate Canvas */
-            --bg-surface: #F8FAFD;     /* Crisp Luminous Surface */
-            --bg-card: #FFFFFF;        /* Pure White Card */
-            --bg-card-hover: #F1F5F9;  
-            --bg-input: #FFFFFF;
-            --bg-nav: #FFFFFF;
+            --bg-page: #EEF2F6;
+            --bg-surface: #F8FAFD;
+            --bg-card: #FFFFFF;
             --bg-panel: #E2E8F0;
 
             --border: rgba(18, 19, 20, 0.16);
-            --border-strong: #121314;  /* Dense Carbon Charcoal */
-            --border-accent: #0084DD;  /* Constructivist Vivid Blue */
+            --border-strong: #121314;
+            --border-accent: #0084DD;
 
-            --text-main: #121314;      /* Dense Carbon Charcoal */
-            --text-muted: #595D62;     /* Slate Muted */
+            --text-main: #121314;
+            --text-muted: #595D62;
             --text-subtle: #85898E;
 
-            --primary: #0084DD;        /* Constructivist Vivid Blue */
+            --primary: #0084DD;
             --primary-hover: #006EB8;
-            --primary-contrast: #FFFFFF;
-
-            --secondary: #121314;
-            --secondary-contrast: #EEF2F6;
 
             --success: #0D8249;
             --warning: #D97706;
             --danger: #DC2626;
 
-            /* Spacing & Radii Standards (Wajib Konsisten) */
-            --topbar-height: 60px;
+            --topbar-height: 56px;
             --radius-sm: 3px;
-            --radius-md: 4px;
 
             --font-body: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             --font-heading: 'Outfit', sans-serif;
         }
 
-        /* Reset bayangan dekoratif berlebih */
         *, *::before, *::after {
             box-sizing: border-box;
             box-shadow: none !important;
@@ -67,12 +56,12 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            line-height: 1.5;
+            line-height: 1.45;
             -webkit-font-smoothing: antialiased;
             position: relative;
         }
 
-        /* Tactile Grain Overlay matching main site */
+        /* Subtle Grain Overlay */
         .grain-overlay {
             position: fixed;
             top: 0;
@@ -85,24 +74,22 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* -------------------------------------------------------------
-           Topbar Standard (Section 3.E)
-           ------------------------------------------------------------- */
+        /* Topbar */
         .rbx-topbar {
-            height: var(--topbar-height, 60px);
+            height: var(--topbar-height);
             position: sticky;
             top: 0;
             z-index: 100;
-            background-color: var(--bg-nav);
+            background-color: var(--bg-card);
             border-bottom: 2px solid var(--border-strong);
             display: flex;
             align-items: center;
-            padding: 0 24px;
+            padding: 0 20px;
         }
 
         .topbar-content {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -112,17 +99,16 @@
         .topbar-brand {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             text-decoration: none;
             color: var(--text-main);
         }
 
         .brand-title {
             font-family: var(--font-heading);
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 800;
             letter-spacing: -0.02em;
-            color: var(--text-main);
         }
 
         .brand-dot {
@@ -131,13 +117,13 @@
 
         .topbar-divider {
             color: var(--text-subtle);
-            font-weight: 300;
-            font-size: 16px;
+            font-weight: 400;
+            font-size: 14px;
         }
 
         .topbar-subtitle {
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -146,26 +132,26 @@
         .topbar-actions {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .admin-user-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 10px;
+            padding: 3px 8px;
             background-color: var(--bg-surface);
             border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
             font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             color: var(--text-main);
         }
 
         .admin-status-dot {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background-color: var(--success);
         }
@@ -174,13 +160,13 @@
             background-color: transparent;
             border: 1px solid var(--border-strong);
             color: var(--text-main);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: var(--radius-sm);
             font-family: var(--font-body);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.15s ease, border-color 0.15s ease;
+            transition: all 0.15s ease;
         }
 
         .admin-logout-btn:hover {
@@ -188,15 +174,13 @@
             color: #FFFFFF;
         }
 
-        /* -------------------------------------------------------------
-           State 1: Loading Screen (Section 3.C)
-           ------------------------------------------------------------- */
+        /* Loading Screen */
         .admin-loading-screen {
-            min-height: calc(100vh - var(--topbar-height, 60px));
+            min-height: calc(100vh - var(--topbar-height));
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+            padding: 20px;
             position: relative;
             z-index: 2;
         }
@@ -214,18 +198,16 @@
             to { transform: rotate(360deg); }
         }
 
-        /* -------------------------------------------------------------
-           State 2: 403 Forbidden Screen (Section 3.B)
-           ------------------------------------------------------------- */
+        /* 403 Forbidden Screen */
         .error-content {
-            min-height: calc(100vh - var(--topbar-height, 60px));
+            min-height: calc(100vh - var(--topbar-height));
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             user-select: none;
-            padding: 24px;
+            padding: 20px;
             position: relative;
             z-index: 2;
         }
@@ -235,63 +217,46 @@
             font-weight: 800;
             line-height: 1;
             letter-spacing: -0.04em;
-            color: var(--text-main, currentColor);
+            color: var(--text-main);
             font-family: var(--font-heading);
         }
 
         .error-label {
             margin-top: 8px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: var(--text-muted, #595D62);
+            color: var(--text-muted);
         }
 
-        /* -------------------------------------------------------------
-           State 3: Admin Dashboard Layout (Boxy, Flat, Clean)
-           ------------------------------------------------------------- */
+        /* Dashboard Container */
         .admin-dashboard-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 32px 24px 64px 24px;
+            padding: 24px 20px 48px 20px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 16px;
             position: relative;
             z-index: 2;
         }
 
-        /* Header Band */
-        .admin-header-band {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--border-strong);
-        }
-
-        .admin-eyebrow {
-            font-size: 11px;
-            font-family: var(--font-mono);
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-weight: 700;
-        }
-
-        .admin-title-row {
+        /* Header Row */
+        .admin-header-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-strong);
         }
 
         .admin-title {
             font-family: var(--font-heading);
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 800;
             letter-spacing: -0.02em;
             color: var(--text-main);
@@ -300,15 +265,15 @@
         .admin-meta-chips {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .admin-chip {
             font-family: var(--font-mono);
             font-size: 11px;
-            font-weight: 600;
-            padding: 4px 8px;
+            font-weight: 700;
+            padding: 3px 8px;
             background-color: var(--bg-card);
             border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
@@ -320,15 +285,15 @@
             background-color: var(--bg-surface);
         }
 
-        /* Section Cards (Accnet Boxy White Surface) */
+        /* Boxy Cards */
         .admin-card {
             background-color: var(--bg-card);
             border: 2px solid var(--border-strong);
             border-radius: var(--radius-sm);
-            padding: 24px;
+            padding: 18px 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
 
         .card-head {
@@ -336,18 +301,12 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 16px;
-        }
-
-        .card-head-title-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            padding-bottom: 12px;
         }
 
         .card-title {
             font-family: var(--font-heading);
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -368,19 +327,14 @@
             font-weight: 700;
         }
 
-        .card-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Rate Calibrator Form (Primary Feature) */
+        /* Two-Column Grid */
         .rate-grid-two-col {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 16px;
         }
 
-        @media (max-width: 860px) {
+        @media (max-width: 800px) {
             .rate-grid-two-col {
                 grid-template-columns: 1fr;
             }
@@ -389,17 +343,17 @@
         .rate-control-panel {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .form-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -411,7 +365,7 @@
         .input-row {
             display: flex;
             align-items: center;
-            background-color: var(--bg-input);
+            background-color: var(--bg-card);
             border: 2px solid var(--border-strong);
             border-radius: var(--radius-sm);
             transition: border-color 0.15s ease;
@@ -422,9 +376,9 @@
         }
 
         .input-prefix, .input-suffix {
-            padding: 10px 14px;
+            padding: 8px 12px;
             font-family: var(--font-mono);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-muted);
             user-select: none;
@@ -444,9 +398,9 @@
             outline: none;
             color: var(--text-main);
             font-family: var(--font-mono);
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
-            padding: 10px 14px;
+            padding: 8px 12px;
         }
 
         .preset-row {
@@ -456,22 +410,14 @@
             flex-wrap: wrap;
         }
 
-        .preset-label {
-            font-size: 11px;
-            font-family: var(--font-mono);
-            font-weight: 700;
-            color: var(--text-subtle);
-            margin-right: 4px;
-        }
-
         .preset-btn {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-strong);
             color: var(--text-main);
             font-family: var(--font-mono);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             transition: all 0.15s ease;
@@ -487,19 +433,19 @@
             color: #FFFFFF;
         }
 
-        /* Live Preview Card */
+        /* Preview Grid */
         .preview-box {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
-            padding: 16px;
+            padding: 12px 14px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .preview-box-title {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -510,7 +456,7 @@
         .preview-metric-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 8px;
         }
 
         .preview-metric-item {
@@ -519,20 +465,20 @@
             gap: 2px;
             background-color: #FFFFFF;
             border: 1px solid var(--border);
-            padding: 10px 12px;
+            padding: 8px 10px;
             border-radius: var(--radius-sm);
         }
 
         .metric-label {
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
         .metric-value {
             font-family: var(--font-mono);
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 800;
             color: var(--text-main);
         }
@@ -541,14 +487,42 @@
             color: var(--primary);
         }
 
-        /* Action Buttons */
+        /* Simulator Grid */
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 1fr 30px 1fr 1fr;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        @media (max-width: 680px) {
+            .simulator-grid {
+                grid-template-columns: 1fr;
+            }
+            .simulator-arrow {
+                display: none;
+            }
+        }
+
+        .simulator-arrow {
+            text-align: center;
+            color: var(--text-subtle);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Buttons */
         .card-actions-dock {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 12px;
-            padding-top: 12px;
+            gap: 10px;
+            padding-top: 10px;
             border-top: 1px solid var(--border);
         }
 
@@ -564,9 +538,9 @@
             border: 2px solid var(--border-strong);
             color: #FFFFFF;
             font-family: var(--font-body);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            padding: 9px 18px;
+            padding: 7px 14px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             transition: background-color 0.15s ease;
@@ -581,9 +555,9 @@
             border: 1px solid var(--border-strong);
             color: var(--text-main);
             font-family: var(--font-body);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            padding: 9px 16px;
+            padding: 7px 12px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             transition: background-color 0.15s ease;
@@ -593,68 +567,45 @@
             background-color: var(--bg-surface);
         }
 
-        /* Conversion Simulator Box */
-        .simulator-grid {
-            display: grid;
-            grid-template-columns: 1fr 40px 1fr 1fr;
-            align-items: center;
-            gap: 12px;
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: var(--radius-sm);
-        }
-
-        @media (max-width: 720px) {
-            .simulator-grid {
-                grid-template-columns: 1fr;
-            }
-            .simulator-arrow {
-                display: none;
-            }
-        }
-
-        .simulator-arrow {
-            text-align: center;
-            color: var(--text-subtle);
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        /* Node Diagnostics Grid */
+        /* Nodes Grid */
         .nodes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
         }
 
         .node-item {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .node-item-head {
+            padding: 10px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
+        .node-info-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .node-name {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text-main);
-            text-transform: uppercase;
             letter-spacing: 0.04em;
+        }
+
+        .node-latency {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-subtle);
         }
 
         .node-status-badge {
             font-family: var(--font-mono);
-            font-size: 10px;
+            font-size: 9px;
             padding: 2px 6px;
             border-radius: var(--radius-sm);
             font-weight: 700;
@@ -672,32 +623,13 @@
             border: 1px solid rgba(217, 119, 6, 0.4);
         }
 
-        .status-error {
-            background-color: rgba(220, 38, 38, 0.12);
-            color: var(--danger);
-            border: 1px solid rgba(220, 38, 38, 0.4);
-        }
-
-        .node-url {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            word-break: break-all;
-        }
-
-        .node-latency {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-subtle);
-        }
-
-        /* Audit Log Console */
+        /* Log Box */
         .admin-log-box {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-strong);
             border-radius: var(--radius-sm);
-            padding: 12px;
-            max-height: 160px;
+            padding: 10px 12px;
+            max-height: 120px;
             overflow-y: auto;
             font-family: var(--font-mono);
             font-size: 11px;
@@ -726,52 +658,31 @@
             color: var(--text-main);
         }
 
-        /* Toast Feedback */
+        /* Toast */
         .admin-toast {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: 20px;
+            right: 20px;
             background-color: var(--border-strong);
             color: #FFFFFF;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: var(--radius-sm);
             font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            transform: translateY(10px);
+            transition: all 0.2s ease;
+            transform: translateY(6px);
             z-index: 999;
         }
 
         .admin-toast.visible {
             opacity: 1;
             transform: translateY(0);
-        }
-
-        /* Standard Image Fallback (Section 3.D) */
-        .img-fallback-box,
-        img.img-fallback-applied {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 14px;
-            background-color: var(--bg-card, transparent);
-            border: 1px solid var(--border-strong);
-            border-radius: var(--radius-sm, 3px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-
-        .img-fallback-svg {
-            color: var(--text-muted, currentColor);
-            opacity: 0.5;
         }
     </style>
 </head>
@@ -780,7 +691,7 @@
     <!-- Tactile Grain Overlay -->
     <div class="grain-overlay"></div>
 
-    <!-- Topbar Standard (Section 3.E) -->
+    <!-- Topbar -->
     <header class="rbx-topbar">
         <div class="topbar-content">
             <a href="/" class="topbar-brand" aria-label="Brand">
@@ -798,52 +709,46 @@
         </div>
     </header>
 
-    <!-- State 1: Verification Access (Section 3.C) -->
+    <!-- State 1: Verification Access -->
     <div id="loadingScreen" class="admin-loading-screen">
         <div class="admin-spinner"></div>
     </div>
 
-    <!-- State 2: 403 Forbidden Minimalist (Section 3.B) -->
+    <!-- State 2: 403 Forbidden -->
     <main id="forbiddenScreen" class="error-content" style="display: none;">
         <div class="error-code">403</div>
         <div class="error-label">Forbidden</div>
     </main>
 
-    <!-- State 3: Admin Dashboard Active (Section 3.A & Feature /rate) -->
+    <!-- State 3: Admin Dashboard Active -->
     <main id="adminDashboard" class="admin-dashboard-container" style="display: none;">
         
-        <!-- Header Hero Lockup -->
-        <div class="admin-header-band">
-            <div class="admin-eyebrow">XLNT ECOSYSTEM &bull; ACCNET ADMIN CONSOLE</div>
-            <div class="admin-title-row">
-                <h1 class="admin-title" id="welcomeUser">Admin Panel</h1>
-                <div class="admin-meta-chips">
-                    <span class="admin-chip admin-chip-highlight" id="adminUserId">UID: ---</span>
-                    <span class="admin-chip" id="adminRoleBadge">ROLE: ADMIN</span>
-                    <span class="admin-chip" id="sessionExpires">SESSION: VALID</span>
-                </div>
+        <!-- Header Row -->
+        <div class="admin-header-row">
+            <h1 class="admin-title" id="welcomeUser">ADMIN</h1>
+            <div class="admin-meta-chips">
+                <span class="admin-chip admin-chip-highlight" id="adminUserId">UID: ---</span>
+                <span class="admin-chip" id="adminRoleBadge">ADMIN</span>
+                <span class="admin-chip" id="sessionExpires">SESSION: VALID</span>
             </div>
         </div>
 
-        <!-- Section 1: Exchange Rate Calibrator (/rate) - CORE ADMIN FEATURE -->
+        <!-- Section 1: Rate Calibrator -->
         <section class="admin-card">
             <div class="card-head">
-                <div class="card-head-title-group">
-                    <div class="card-title">
-                        <span>EXCHANGE RATE CALIBRATOR</span>
-                        <span class="card-badge">/rate Node</span>
-                    </div>
-                    <p class="card-desc">Konfigurasi nilai tukar konversi dasar Robux ke Rupiah (IDR) dan sinkronisasi nilai pasar USD secara real-time.</p>
+                <div class="card-title">
+                    <span>RATE CALIBRATOR</span>
+                    <span class="card-badge">/rate</span>
                 </div>
+                <span id="current-deployed-tag" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--primary);">ACTIVE: Rp 110</span>
             </div>
 
             <div class="rate-grid-two-col">
-                <!-- Left Column: Controls & Presets -->
+                <!-- Left: Rate inputs & Presets -->
                 <div class="rate-control-panel">
                     <div class="form-group">
                         <label class="form-label" for="admin-rate-idr">
-                            <span>ROBUX TO RUPIAH (IDR) RATE</span>
-                            <span id="current-deployed-tag" style="color: var(--primary);">ACTIVE: Rp 110</span>
+                            <span>ROBUX TO IDR</span>
                         </label>
                         <div class="input-row">
                             <span class="input-prefix">Rp</span>
@@ -854,10 +759,9 @@
 
                     <div class="form-group">
                         <label class="form-label">
-                            <span>QUICK PRESETS</span>
+                            <span>PRESETS</span>
                         </label>
                         <div class="preset-row">
-                            <span class="preset-label">PRESET:</span>
                             <button type="button" class="preset-btn" onclick="applyPreset(80)">80</button>
                             <button type="button" class="preset-btn" onclick="applyPreset(90)">90</button>
                             <button type="button" class="preset-btn" onclick="applyPreset(100)">100</button>
@@ -868,44 +772,43 @@
 
                     <div class="form-group">
                         <label class="form-label" for="admin-usd-market">
-                            <span>USD / IDR MARKET RATE (AUTO-SYNC)</span>
+                            <span>USD / IDR RATE</span>
                         </label>
                         <div class="input-row">
-                            <span class="input-prefix">$1 USD =</span>
+                            <span class="input-prefix">$1 =</span>
                             <input type="number" id="admin-usd-market" class="rate-text-input" step="any" min="1" placeholder="15714" oninput="updateLivePreviews()">
                             <span class="input-suffix">IDR</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Column: Computed Preview Grid -->
+                <!-- Right: Preview -->
                 <div class="preview-box">
-                    <div class="preview-box-title">LIVE CALIBRATION MATRIX</div>
+                    <div class="preview-box-title">PREVIEW</div>
                     <div class="preview-metric-list">
                         <div class="preview-metric-item">
-                            <span class="metric-label">1 R$ to IDR</span>
+                            <span class="metric-label">1 R$ (IDR)</span>
                             <span class="metric-value metric-highlight" id="preview-1-idr">Rp 110</span>
                         </div>
                         <div class="preview-metric-item">
-                            <span class="metric-label">1 R$ to USD</span>
+                            <span class="metric-label">1 R$ (USD)</span>
                             <span class="metric-value" id="preview-1-usd">$0.007000</span>
                         </div>
                         <div class="preview-metric-item">
-                            <span class="metric-label">1,000 R$ Preview</span>
+                            <span class="metric-label">1,000 R$</span>
                             <span class="metric-value" id="preview-1k-idr">Rp 110,000</span>
                         </div>
                         <div class="preview-metric-item">
-                            <span class="metric-label">10,000 R$ Preview</span>
+                            <span class="metric-label">10,000 R$</span>
                             <span class="metric-value" id="preview-10k-idr">Rp 1,100,000</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Conversion Simulator -->
-            <div class="form-group" style="margin-top: 4px;">
+            <!-- Simulator -->
+            <div class="form-group">
                 <label class="form-label">
-                    <span>LIVE CONVERSION TESTER</span>
                     <span>SIMULATOR</span>
                 </label>
                 <div class="simulator-grid">
@@ -915,94 +818,78 @@
                     </div>
                     <div class="simulator-arrow">&rarr;</div>
                     <div class="preview-metric-item">
-                        <span class="metric-label">ESTIMATED IDR</span>
+                        <span class="metric-label">IDR</span>
                         <span class="metric-value metric-highlight" id="sim-result-idr">Rp 550,000</span>
                     </div>
                     <div class="preview-metric-item">
-                        <span class="metric-label">ESTIMATED USD</span>
+                        <span class="metric-label">USD</span>
                         <span class="metric-value" id="sim-result-usd">$35.00</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Card Actions -->
+            <!-- Actions -->
             <div class="card-actions-dock">
                 <div class="btn-group">
-                    <button type="button" class="btn-primary" onclick="saveAdminRates()">SAVE &amp; DEPLOY RATE</button>
-                    <button type="button" class="btn-secondary" onclick="fetchLiveMarketRate(true)">SYNC MARKET RATE</button>
-                    <button type="button" class="btn-secondary" onclick="resetToDefault()">RESET DEFAULT (110)</button>
+                    <button type="button" class="btn-primary" onclick="saveAdminRates()">SAVE</button>
+                    <button type="button" class="btn-secondary" onclick="fetchLiveMarketRate(true)">SYNC USD</button>
+                    <button type="button" class="btn-secondary" onclick="resetToDefault()">RESET</button>
                 </div>
                 <div class="btn-group">
-                    <a href="/" class="btn-secondary" target="_blank" style="text-decoration: none;">OPEN AUDITOR &nearr;</a>
+                    <a href="/" class="btn-secondary" target="_blank" style="text-decoration: none;">AUDITOR &nearr;</a>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: Ecosystem & Node Connectivity Diagnostics -->
+        <!-- Section 2: Nodes -->
         <section class="admin-card">
             <div class="card-head">
-                <div class="card-head-title-group">
-                    <div class="card-title">
-                        <span>ECOSYSTEM &amp; NODE CONNECTIVITY</span>
-                        <span class="card-badge">DIAGNOSTICS</span>
-                    </div>
-                    <p class="card-desc">Status koneksi dan latensi jaringan ke layanan pusat XLNT, Deno reverse proxy, Rolimons, dan Roblox API.</p>
+                <div class="card-title">
+                    <span>NODES</span>
                 </div>
-                <button type="button" class="btn-secondary" onclick="runNodeDiagnostics()">RUN DIAGNOSTICS</button>
+                <button type="button" class="btn-secondary" onclick="runNodeDiagnostics()" style="padding: 4px 10px; font-size: 11px;">PING ALL</button>
             </div>
 
             <div class="nodes-grid">
-                <!-- Node 1: XLNT Central Auth -->
                 <div class="node-item">
-                    <div class="node-item-head">
-                        <span class="node-name">XLNT Central Auth</span>
-                        <span class="node-status-badge status-online" id="node-status-auth">CONNECTED</span>
+                    <div class="node-info-col">
+                        <span class="node-name">XLNT AUTH</span>
+                        <span class="node-latency" id="node-latency-auth">verified</span>
                     </div>
-                    <span class="node-url">xlnt.alwaysdata.net/api/auth</span>
-                    <span class="node-latency" id="node-latency-auth">Latency: verified</span>
+                    <span class="node-status-badge status-online" id="node-status-auth">ONLINE</span>
                 </div>
 
-                <!-- Node 2: Deno Reverse Proxy -->
                 <div class="node-item">
-                    <div class="node-item-head">
-                        <span class="node-name">Deno Reverse Proxy</span>
-                        <span class="node-status-badge status-pending" id="node-status-deno">READY</span>
+                    <div class="node-info-col">
+                        <span class="node-name">DENO PROXY</span>
+                        <span class="node-latency" id="node-latency-deno">-- ms</span>
                     </div>
-                    <span class="node-url">keep-xylent.deno.net</span>
-                    <span class="node-latency" id="node-latency-deno">Latency: -- ms</span>
+                    <span class="node-status-badge status-pending" id="node-status-deno">READY</span>
                 </div>
 
-                <!-- Node 3: Rolimons API -->
                 <div class="node-item">
-                    <div class="node-item-head">
-                        <span class="node-name">Rolimons Market Node</span>
-                        <span class="node-status-badge status-pending" id="node-status-rolimons">READY</span>
+                    <div class="node-info-col">
+                        <span class="node-name">ROLIMONS</span>
+                        <span class="node-latency" id="node-latency-rolimons">-- ms</span>
                     </div>
-                    <span class="node-url">rolimons.com/itemapi</span>
-                    <span class="node-latency" id="node-latency-rolimons">Latency: -- ms</span>
+                    <span class="node-status-badge status-pending" id="node-status-rolimons">READY</span>
                 </div>
 
-                <!-- Node 4: Roblox Network -->
                 <div class="node-item">
-                    <div class="node-item-head">
-                        <span class="node-name">Roblox Public API</span>
-                        <span class="node-status-badge status-pending" id="node-status-roblox">READY</span>
+                    <div class="node-info-col">
+                        <span class="node-name">ROBLOX API</span>
+                        <span class="node-latency" id="node-latency-roblox">-- ms</span>
                     </div>
-                    <span class="node-url">users.roblox.com</span>
-                    <span class="node-latency" id="node-latency-roblox">Latency: -- ms</span>
+                    <span class="node-status-badge status-pending" id="node-status-roblox">READY</span>
                 </div>
             </div>
         </section>
 
-        <!-- Section 3: Session Activity Log -->
+        <!-- Section 3: Log -->
         <section class="admin-card">
             <div class="card-head">
-                <div class="card-head-title-group">
-                    <div class="card-title">
-                        <span>SESSION ACTIVITY LOG</span>
-                        <span class="card-badge">AUDIT</span>
-                    </div>
-                    <p class="card-desc">Riwayat aksi konfigurasi dan pemeriksaan sistem selama sesi admin berlangsung.</p>
+                <div class="card-title">
+                    <span>LOG</span>
                 </div>
                 <button type="button" class="btn-secondary" onclick="clearActivityLog()" style="padding: 4px 10px; font-size: 11px;">CLEAR</button>
             </div>
@@ -1010,20 +897,20 @@
             <div class="admin-log-box" id="adminLogBox">
                 <div class="log-entry">
                     <span class="log-time">[00:00:00]</span>
-                    <span class="log-msg-info">Admin Console initialized. Ready for operations.</span>
+                    <span class="log-msg-info">Ready.</span>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Feedback Toast -->
+    <!-- Toast -->
     <div id="adminToast" class="admin-toast">
         <span id="toastIcon">&bull;</span>
-        <span id="toastMessage">Action completed.</span>
+        <span id="toastMessage">Done.</span>
     </div>
 
-    <!-- Script SSO Authentication & Features -->
+    <!-- Script -->
     <script>
         const DEFAULT_RATE_IDR = 110;
         const DEFAULT_USD_TO_IDR = 15714.2857;
@@ -1035,9 +922,7 @@
             rateUsd: DEFAULT_RATE_IDR / DEFAULT_USD_TO_IDR
         };
 
-        // -------------------------------------------------------------
-        // SSO Authentication Flow (Section 1 & 4.B)
-        // -------------------------------------------------------------
+        // SSO Auth
         async function initAdminAuth() {
             const urlParams = new URLSearchParams(window.location.search);
             const tokenFromUrl = urlParams.get('token');
@@ -1056,7 +941,6 @@
                     sessionStorage.setItem('xlnt_admin_token', token);
                     sessionStorage.setItem('xlnt_admin_user', JSON.stringify(data));
 
-                    // Bersihkan ?token= dari URL browser demi keamanan (Section 5.1)
                     if (tokenFromUrl) {
                         const cleanUrl = window.location.pathname;
                         window.history.replaceState({}, document.title, cleanUrl);
@@ -1089,26 +973,21 @@
             document.getElementById('topbarActions').style.display = 'inline-flex';
             document.getElementById('adminDashboard').style.display = 'flex';
 
-            // User Profile metadata
-            const username = userData.username || 'Administrator';
-            document.getElementById('welcomeUser').textContent = `Welcome, ${username}`;
+            const username = userData.username || 'Admin';
+            document.getElementById('welcomeUser').textContent = `@${username.toUpperCase()}`;
             document.getElementById('topbarUsername').textContent = `@${username}`;
             document.getElementById('adminUserId').textContent = `UID: ${userData.userId || '---'}`;
 
             if (userData.permissions?.isDiscordAdmin) {
-                document.getElementById('adminRoleBadge').textContent = 'ROLE: DISCORD ADMIN';
-                document.getElementById('adminRoleBadge').style.borderColor = 'var(--primary)';
-                document.getElementById('adminRoleBadge').style.color = 'var(--text-main)';
+                document.getElementById('adminRoleBadge').textContent = 'DISCORD ADMIN';
             }
 
-            // Expiration countdown
             if (userData.expiresAt) {
                 startExpirationTimer(userData.expiresAt);
             }
 
-            appendLog(`SSO Authentication success for @${username}`, 'success');
+            appendLog(`Auth OK: @${username}`, 'success');
 
-            // Load rate configurations
             loadCurrentRates();
             updateLivePreviews();
             updateSimCalculations();
@@ -1122,7 +1001,7 @@
                 if (!badge) return;
 
                 if (diff <= 0) {
-                    badge.textContent = 'SESSION: EXPIRED';
+                    badge.textContent = 'EXPIRED';
                     badge.style.color = 'var(--danger)';
                     sessionStorage.removeItem('xlnt_admin_token');
                     sessionStorage.removeItem('xlnt_admin_user');
@@ -1130,24 +1009,21 @@
                     return;
                 }
 
-                const minutes = Math.floor(diff / 60000);
-                const seconds = Math.floor((diff % 60000) / 1000);
-                badge.textContent = `EXPIRES: ${minutes}m ${seconds}s`;
+                const m = Math.floor(diff / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                badge.textContent = `${m}m ${s}s`;
             }
             updateTimer();
             setInterval(updateTimer, 1000);
         }
 
-        // Logout
         document.getElementById('btnLogout')?.addEventListener('click', () => {
             sessionStorage.removeItem('xlnt_admin_token');
             sessionStorage.removeItem('xlnt_admin_user');
             window.location.href = '/';
         });
 
-        // -------------------------------------------------------------
-        // Exchange Rate Calibrator Logic (/rate Feature)
-        // -------------------------------------------------------------
+        // Rate Logic
         function loadCurrentRates() {
             try {
                 const saved = localStorage.getItem('accnet_rates');
@@ -1158,7 +1034,7 @@
                     if (parsed.USD && parsed.USD > 0) adminState.rateUsd = parsed.USD;
                 }
             } catch (e) {
-                console.warn("Could not read rates:", e);
+                console.warn(e);
             }
 
             document.getElementById('admin-rate-idr').value = adminState.rateIdr;
@@ -1166,7 +1042,6 @@
             document.getElementById('current-deployed-tag').textContent = `ACTIVE: Rp ${Math.round(adminState.rateIdr)}`;
 
             highlightActivePreset(adminState.rateIdr);
-            appendLog(`Loaded active exchange rates: 1 R$ = Rp ${adminState.rateIdr}`, 'info');
         }
 
         function highlightActivePreset(val) {
@@ -1185,7 +1060,7 @@
             highlightActivePreset(val);
             updateLivePreviews();
             updateSimCalculations();
-            showToast(`Preset ${val} selected`);
+            showToast(`Preset: ${val}`);
         }
 
         function updateLivePreviews() {
@@ -1219,10 +1094,7 @@
             const idr = parseFloat(document.getElementById('admin-rate-idr').value);
             const usdToIdr = parseFloat(document.getElementById('admin-usd-market').value) || DEFAULT_USD_TO_IDR;
 
-            if (!idr || idr <= 0) {
-                alert("Please enter a valid positive IDR rate.");
-                return;
-            }
+            if (!idr || idr <= 0) return;
 
             const calculatedUsd = idr / usdToIdr;
 
@@ -1237,11 +1109,10 @@
                     usdToIdr: usdToIdr
                 }));
                 document.getElementById('current-deployed-tag').textContent = `ACTIVE: Rp ${Math.round(idr)}`;
-                showToast(`Rates successfully deployed: 1 R$ = Rp ${idr}`);
-                appendLog(`Rate updated: 1 R$ = Rp ${idr} (~$${calculatedUsd.toFixed(4)})`, 'success');
+                showToast(`Saved: Rp ${idr}`);
+                appendLog(`Saved: 1 R$ = Rp ${idr}`, 'success');
             } catch (err) {
-                console.error("Failed to save rates:", err);
-                showToast("Failed to save rates to localStorage");
+                showToast("Save failed");
             }
         }
 
@@ -1250,12 +1121,11 @@
             document.getElementById('admin-usd-market').value = Math.round(DEFAULT_USD_TO_IDR);
             updateLivePreviews();
             saveAdminRates();
-            showToast("Reset to default rate (110)");
-            appendLog("Rate reset to factory default (110)", 'info');
+            showToast("Reset to 110");
+            appendLog("Reset: 110", 'info');
         }
 
         async function fetchLiveMarketRate(showFeedback) {
-            appendLog("Fetching live USD/IDR exchange rate...", 'info');
             try {
                 const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
                 if (res.ok) {
@@ -1264,48 +1134,37 @@
                         const rate = data.rates.IDR;
                         document.getElementById('admin-usd-market').value = Math.round(rate);
                         updateLivePreviews();
-                        appendLog(`Market rate synchronized: $1 USD = Rp ${Math.round(rate).toLocaleString('id-ID')}`, 'success');
-                        if (showFeedback) showToast(`Synced: 1 USD = Rp ${Math.round(rate).toLocaleString('id-ID')}`);
+                        appendLog(`USD Sync: Rp ${Math.round(rate).toLocaleString('id-ID')}`, 'success');
+                        if (showFeedback) showToast(`Synced: Rp ${Math.round(rate).toLocaleString('id-ID')}`);
                         return;
                     }
                 }
-            } catch (err) {
-                console.warn("Market rate sync failed:", err);
-            }
-            if (showFeedback) showToast("Could not fetch live market rate.");
-            appendLog("Failed to fetch live market rate from API", 'info');
+            } catch (err) {}
+            if (showFeedback) showToast("Sync failed");
         }
 
-        // -------------------------------------------------------------
-        // Node Diagnostics Tester
-        // -------------------------------------------------------------
+        // Diagnostics
         async function runNodeDiagnostics() {
-            appendLog("Running connectivity diagnostics...", 'info');
-
-            // 1. Deno Reverse Proxy
-            testNode('deno', 'https://smart-halibut-3072.keep-xylent.deno.net', true);
-
-            // 2. Rolimons Item Details
-            testNode('rolimons', 'https://www.rolimons.com/itemapi/itemdetails', false);
-
-            // 3. Roblox API
-            testNode('roblox', 'https://users.roblox.com/v1/users/1', false);
+            appendLog("Pinging nodes...", 'info');
+            testNode('deno', 'https://smart-halibut-3072.keep-xylent.deno.net');
+            testNode('rolimons', 'https://www.rolimons.com/itemapi/itemdetails');
+            testNode('roblox', 'https://users.roblox.com/v1/users/1');
         }
 
-        async function testNode(nodeKey, url, isDeno) {
+        async function testNode(nodeKey, url) {
             const statusEl = document.getElementById(`node-status-${nodeKey}`);
             const latencyEl = document.getElementById(`node-latency-${nodeKey}`);
 
             statusEl.className = 'node-status-badge status-pending';
-            statusEl.textContent = 'CHECKING...';
-            latencyEl.textContent = 'Pinging...';
+            statusEl.textContent = '...';
+            latencyEl.textContent = 'pinging';
 
             const start = performance.now();
             try {
                 const controller = new AbortController();
                 const timeout = setTimeout(() => controller.abort(), 6000);
 
-                const res = await fetch(url, {
+                await fetch(url, {
                     method: 'GET',
                     mode: 'no-cors',
                     signal: controller.signal
@@ -1315,20 +1174,18 @@
                 const latency = Math.round(performance.now() - start);
                 statusEl.className = 'node-status-badge status-online';
                 statusEl.textContent = 'ONLINE';
-                latencyEl.textContent = `Latency: ~${latency} ms`;
-                appendLog(`Node [${nodeKey.toUpperCase()}] responsive (${latency}ms)`, 'success');
+                latencyEl.textContent = `${latency} ms`;
+                appendLog(`${nodeKey.toUpperCase()}: ${latency}ms`, 'success');
             } catch (err) {
                 const latency = Math.round(performance.now() - start);
                 statusEl.className = 'node-status-badge status-online';
-                statusEl.textContent = 'RESOLVED';
-                latencyEl.textContent = `Latency: ~${latency} ms (CORS)`;
-                appendLog(`Node [${nodeKey.toUpperCase()}] resolved (~${latency}ms)`, 'info');
+                statusEl.textContent = 'OK';
+                latencyEl.textContent = `~${latency} ms`;
+                appendLog(`${nodeKey.toUpperCase()}: ~${latency}ms`, 'info');
             }
         }
 
-        // -------------------------------------------------------------
-        // Helpers: Logging and Toast
-        // -------------------------------------------------------------
+        // Helpers
         function appendLog(msg, type = 'info') {
             const box = document.getElementById('adminLogBox');
             if (!box) return;
@@ -1369,10 +1226,9 @@
             if (toastTimer) clearTimeout(toastTimer);
             toastTimer = setTimeout(() => {
                 toast.classList.remove('visible');
-            }, 3000);
+            }, 2500);
         }
 
-        // Bootstrap on page load
         initAdminAuth();
     </script>
 </body>
