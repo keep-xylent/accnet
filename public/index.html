@@ -101,7 +101,7 @@
                             <div class="avatar-frame">
                                 <div class="avatar-crosshair-tl"></div>
                                 <div class="avatar-crosshair-br"></div>
-                                <img id="user-avatar" class="avatar" src="" alt="Subject Avatar" onerror="handleImgFallback(this)">
+                                <img id="user-avatar" class="avatar" src="/favicon.svg" alt="Subject Avatar" onerror="handleImgFallback(this)">
                             </div>
                             <div class="identity-meta">
                                 <h2 id="display-name" class="display-name">---</h2>
@@ -635,11 +635,19 @@
             if (!data) return;
 
             // 1. Identity Profile Info
-            document.getElementById('user-avatar').src = data.avatar || '/favicon.svg';
-            document.getElementById('display-name').innerText = data.name.toUpperCase();
-            document.getElementById('username-handle').innerText = `@${data.username}`;
-            document.getElementById('roblox-id').innerText = `UID: ${data.id}`;
-            document.getElementById('user-roblox-link').href = `https://www.roblox.com/users/${data.id}/profile`;
+            const avatarEl = document.getElementById('user-avatar');
+            if (avatarEl) {
+                avatarEl.classList.remove('img-fallback-box');
+                avatarEl.src = data.avatar || '/favicon.svg';
+            }
+            const displayNameEl = document.getElementById('display-name');
+            if (displayNameEl) displayNameEl.innerText = (data.name || '').toUpperCase();
+            const usernameHandleEl = document.getElementById('username-handle');
+            if (usernameHandleEl) usernameHandleEl.innerText = `@${data.username || ''}`;
+            const robloxIdEl = document.getElementById('roblox-id');
+            if (robloxIdEl) robloxIdEl.innerText = `UID: ${data.id || ''}`;
+            const userRobloxLink = document.getElementById('user-roblox-link');
+            if (userRobloxLink) userRobloxLink.href = `https://www.roblox.com/users/${data.id}/profile`;
             const userRoliLink = document.getElementById('user-rolimons-link');
             if (userRoliLink) userRoliLink.href = `https://www.rolimons.com/player/${data.id}`;
 
@@ -658,7 +666,8 @@
             } else {
                 networthLabel = appState.currency === 'RBX' ? 'ESTIMATED NETWORTH (RAP)' : `ESTIMATED NETWORTH (${appState.currency})`;
             }
-            document.getElementById('networth-header-label').innerText = networthLabel;
+            const networthLabelEl = document.getElementById('networth-header-label');
+            if (networthLabelEl) networthLabelEl.innerText = networthLabel;
 
             if (data.private) {
                 document.getElementById('private-msg').classList.remove('hidden');
@@ -2088,16 +2097,13 @@
         }
 
         // Standard Image Fallback Helper (XLNT Ecosystem Guide)
+        const FALLBACK_SVG_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238b929e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='2' y1='2' x2='22' y2='22'/%3E%3Cpath d='M10.41 10.41a2 2 0 1 1-2.83-2.83'/%3E%3Cline x1='13.5' y1='13.5' x2='6' y2='21'/%3E%3Cline x1='18' y1='12' x2='21' y2='15'/%3E%3Cpath d='M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59'/%3E%3Cpath d='M21 15V5a2 2 0 0 0-2-2H9'/%3E%3C/svg%3E";
+
         function handleImgFallback(img) {
-            if (!img || img.dataset.fallbackApplied) return;
-            img.dataset.fallbackApplied = 'true';
-            const wrapper = document.createElement('div');
-            wrapper.className = 'img-fallback-box';
-            wrapper.setAttribute('role', 'img');
-            wrapper.setAttribute('aria-label', 'Image unavailable');
-            wrapper.setAttribute('title', 'Image unavailable');
-            wrapper.innerHTML = `<svg class="img-fallback-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" y1="2" x2="22" y2="22" /><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83" /><line x1="13.5" y1="13.5" x2="6" y2="21" /><line x1="18" y1="12" x2="21" y2="15" /><path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59" /><path d="M21 15V5a2 2 0 0 0-2-2H9" /></svg>`;
-            img.replaceWith(wrapper);
+            if (!img) return;
+            if (img.src === FALLBACK_SVG_DATA_URI) return;
+            img.src = FALLBACK_SVG_DATA_URI;
+            img.classList.add('img-fallback-applied');
         }
 
         // Toast Helper
