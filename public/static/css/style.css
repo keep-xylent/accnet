@@ -2941,3 +2941,77 @@ body {
         grid-column: auto;
     }
 }
+
+
+/* =====================================================================
+   XLNT ECOSYSTEM STANDARDIZED LAYOUT & UTILITY CLASSES
+   (SSO Admin, Image Fallbacks, Loading State, Error Standard)
+   ===================================================================== */
+
+/* 1. Standard Image Fallback (Section 3.D) */
+.img-fallback-box {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-card, transparent);
+    border: 1px solid var(--border-subtle, rgba(127, 127, 127, 0.2));
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.img-fallback-svg {
+    color: var(--text-muted, currentColor);
+    opacity: 0.5;
+}
+
+/* 2. Standard Loading Spinner (Section 3.C) */
+.admin-loading-screen {
+    min-height: calc(100vh - var(--topbar-height, 60px));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.admin-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2.5px solid rgba(127, 127, 127, 0.15);
+    border-top-color: var(--text-main, currentColor);
+    border-radius: 50%;
+    animation: admin-spin 0.75s linear infinite;
+}
+
+@keyframes admin-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 3. Standard Minimalist Error Layout (Section 3.B) */
+.error-content {
+    min-height: calc(100vh - var(--topbar-height, 60px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    user-select: none;
+    padding: 24px;
+}
+
+.error-code {
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--text-main, currentColor);
+}
+
+.error-label {
+    margin-top: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted, #888);
+}

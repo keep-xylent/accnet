@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Console | accnet</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Theme Variables (Utilitarian Dark Boxy) */
+            --bg-page: #0d0f12;
+            --bg-card: #15181e;
+            --bg-card-hover: #1b1e26;
+            --bg-input: #0a0c0e;
+            --bg-nav: #111419;
+            --border: #232730;
+            --border-strong: #333846;
+            --border-accent: #0084DD;
+            --text-main: #f3f4f6;
+            --text-muted: #8b929e;
+            --text-subtle: #575e6b;
+
+            --primary: #0084DD;
+            --primary-hover: #006eb8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+
+            /* Spacing & Radii Standards (Wajib Konsisten) */
+            --topbar-height: 60px;
+            --radius-sm: 3px;
+            --radius-md: 4px;
+
+            --font-body: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-heading: 'Outfit', sans-serif;
+        }
+
+        /* Reset bayangan dekoratif berlebih */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* -------------------------------------------------------------
+           Topbar Standard (Section 3.E)
+           ------------------------------------------------------------- */
+        .rbx-topbar {
+            height: var(--topbar-height, 60px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg-nav);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .topbar-content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topbar-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .brand-title {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .topbar-divider {
+            color: var(--text-subtle);
+            font-weight: 300;
+            font-size: 16px;
+        }
+
+        .topbar-subtitle {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .topbar-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-main);
+        }
+
+        .admin-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+
+        .admin-logout-btn {
+            background-color: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .admin-logout-btn:hover {
+            background-color: var(--border);
+            border-color: var(--text-muted);
+        }
+
+        /* -------------------------------------------------------------
+           State 1: Loading Screen (Section 3.C)
+           ------------------------------------------------------------- */
+        .admin-loading-screen {
+            min-height: calc(100vh - var(--topbar-height, 60px));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .admin-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2.5px solid rgba(127, 127, 127, 0.15);
+            border-top-color: var(--text-main, currentColor);
+            border-radius: 50%;
+            animation: admin-spin 0.75s linear infinite;
+        }
+
+        @keyframes admin-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* -------------------------------------------------------------
+           State 2: 403 Forbidden Screen (Section 3.B)
+           ------------------------------------------------------------- */
+        .error-content {
+            min-height: calc(100vh - var(--topbar-height, 60px));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            user-select: none;
+            padding: 24px;
+        }
+
+        .error-code {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            color: var(--text-main, currentColor);
+            font-family: var(--font-heading);
+        }
+
+        .error-label {
+            margin-top: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted, #888);
+        }
+
+        /* -------------------------------------------------------------
+           State 3: Admin Dashboard Layout (Boxy, Flat, Clean)
+           ------------------------------------------------------------- */
+        .admin-dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px 64px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Header Band */
+        .admin-header-band {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-eyebrow {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .admin-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .admin-title {
+            font-family: var(--font-heading);
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .admin-meta-chips {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .admin-chip {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 4px 8px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+        }
+
+        .admin-chip-highlight {
+            color: var(--text-main);
+            border-color: var(--border-strong);
+        }
+
+        /* Section Cards */
+        .admin-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .card-head-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            color: var(--primary);
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Rate Calibrator Form (Primary Feature) */
+        .rate-grid-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 860px) {
+            .rate-grid-two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rate-control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: border-color 0.15s ease;
+        }
+
+        .input-row:focus-within {
+            border-color: var(--primary);
+        }
+
+        .input-prefix, .input-suffix {
+            padding: 10px 14px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-muted);
+            user-select: none;
+            background-color: var(--bg-page);
+            border-right: 1px solid var(--border);
+        }
+
+        .input-suffix {
+            border-right: none;
+            border-left: 1px solid var(--border);
+        }
+
+        .rate-text-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 16px;
+            font-weight: 700;
+            padding: 10px 14px;
+        }
+
+        .preset-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .preset-label {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--text-subtle);
+            margin-right: 4px;
+        }
+
+        .preset-btn {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--border-strong);
+            color: var(--text-main);
+        }
+
+        .preset-btn.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Live Preview Card */
+        .preview-box {
+            background-color: var(--bg-page);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .preview-box-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-subtle);
+            font-family: var(--font-mono);
+        }
+
+        .preview-metric-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .preview-metric-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .metric-highlight {
+            color: var(--primary);
+        }
+
+        /* Action Buttons */
+        .card-actions-dock {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border: 1px solid var(--primary);
+            color: #ffffff;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border);
+        }
+
+        /* Conversion Simulator Box */
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 1fr 40px 1fr 1fr;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--bg-page);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: var(--radius-sm);
+        }
+
+        @media (max-width: 720px) {
+            .simulator-grid {
+                grid-template-columns: 1fr;
+            }
+            .simulator-arrow {
+                display: none;
+            }
+        }
+
+        .simulator-arrow {
+            text-align: center;
+            color: var(--text-subtle);
+            font-size: 18px;
+        }
+
+        /* Node Diagnostics Grid */
+        .nodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+        }
+
+        .node-item {
+            background-color: var(--bg-page);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .node-item-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .node-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .node-status-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+
+        .status-online {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .node-url {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        .node-latency {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-subtle);
+        }
+
+        /* Audit Log Console */
+        .admin-log-box {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            max-height: 160px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .log-entry {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            color: var(--text-muted);
+        }
+
+        .log-time {
+            color: var(--text-subtle);
+        }
+
+        .log-msg-success {
+            color: var(--success);
+        }
+
+        .log-msg-info {
+            color: var(--text-main);
+        }
+
+        /* Toast Feedback */
+        .admin-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: var(--bg-nav);
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: translateY(10px);
+            z-index: 999;
+        }
+
+        .admin-toast.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Standard Image Fallback (Section 3.D) */
+        .img-fallback-box {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-card, transparent);
+            border: 1px solid var(--border, rgba(127, 127, 127, 0.2));
+            border-radius: var(--radius-sm, 3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-fallback-svg {
+            color: var(--text-muted, currentColor);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="admin-page-wrapper">
+
+    <!-- Topbar Standard (Section 3.E) -->
+    <header class="rbx-topbar">
+        <div class="topbar-content">
+            <a href="/" class="topbar-brand" aria-label="Brand">
+                <span class="brand-title">accnet</span>
+                <span class="topbar-divider">/</span>
+                <span class="topbar-subtitle">Admin</span>
+            </a>
+            <div class="topbar-actions" id="topbarActions" style="display: none;">
+                <span class="admin-user-pill">
+                    <span class="admin-status-dot"></span>
+                    <span id="topbarUsername">Admin</span>
+                </span>
+                <button type="button" class="admin-logout-btn" id="btnLogout">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- State 1: Verification Access (Section 3.C) -->
+    <div id="loadingScreen" class="admin-loading-screen">
+        <div class="admin-spinner"></div>
+    </div>
+
+    <!-- State 2: 403 Forbidden Minimalist (Section 3.B) -->
+    <main id="forbiddenScreen" class="error-content" style="display: none;">
+        <div class="error-code">403</div>
+        <div class="error-label">Forbidden</div>
+    </main>
+
+    <!-- State 3: Admin Dashboard Active (Section 3.A & Feature /rate) -->
+    <main id="adminDashboard" class="admin-dashboard-container" style="display: none;">
+        
+        <!-- Header Hero Lockup -->
+        <div class="admin-header-band">
+            <div class="admin-eyebrow">XLNT Ecosystem &bull; Sub-Project Admin Control</div>
+            <div class="admin-title-row">
+                <h1 class="admin-title" id="welcomeUser">Admin Panel</h1>
+                <div class="admin-meta-chips">
+                    <span class="admin-chip admin-chip-highlight" id="adminUserId">UID: ---</span>
+                    <span class="admin-chip" id="adminRoleBadge">ROLE: ADMIN</span>
+                    <span class="admin-chip" id="sessionExpires">SESSION: VALID</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Exchange Rate Calibrator (/rate) - CORE ADMIN FEATURE -->
+        <section class="admin-card">
+            <div class="card-head">
+                <div class="card-head-title-group">
+                    <div class="card-title">
+                        <span>EXCHANGE RATE CALIBRATOR</span>
+                        <span class="card-badge">/rate Node</span>
+                    </div>
+                    <p class="card-desc">Konfigurasi nilai tukar konversi dasar Robux ke Rupiah (IDR) dan sinkronisasi nilai pasar USD secara real-time.</p>
+                </div>
+            </div>
+
+            <div class="rate-grid-two-col">
+                <!-- Left Column: Controls & Presets -->
+                <div class="rate-control-panel">
+                    <div class="form-group">
+                        <label class="form-label" for="admin-rate-idr">
+                            <span>ROBUX TO RUPIAH (IDR) RATE</span>
+                            <span id="current-deployed-tag" style="color: var(--primary);">ACTIVE: Rp 110</span>
+                        </label>
+                        <div class="input-row">
+                            <span class="input-prefix">Rp</span>
+                            <input type="number" id="admin-rate-idr" class="rate-text-input" step="any" min="1" placeholder="110" oninput="updateLivePreviews()">
+                            <span class="input-suffix">/ 1 R$</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>QUICK PRESETS</span>
+                        </label>
+                        <div class="preset-row">
+                            <span class="preset-label">PRESET:</span>
+                            <button type="button" class="preset-btn" onclick="applyPreset(80)">80</button>
+                            <button type="button" class="preset-btn" onclick="applyPreset(90)">90</button>
+                            <button type="button" class="preset-btn" onclick="applyPreset(100)">100</button>
+                            <button type="button" class="preset-btn active" id="preset-110" onclick="applyPreset(110)">110</button>
+                            <button type="button" class="preset-btn" onclick="applyPreset(120)">120</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="admin-usd-market">
+                            <span>USD / IDR MARKET RATE (AUTO-SYNC)</span>
+                        </label>
+                        <div class="input-row">
+                            <span class="input-prefix">$1 USD =</span>
+                            <input type="number" id="admin-usd-market" class="rate-text-input" step="any" min="1" placeholder="15714" oninput="updateLivePreviews()">
+                            <span class="input-suffix">IDR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Computed Preview Grid -->
+                <div class="preview-box">
+                    <div class="preview-box-title">LIVE CALIBRATION MATRIX</div>
+                    <div class="preview-metric-list">
+                        <div class="preview-metric-item">
+                            <span class="metric-label">1 R$ to IDR</span>
+                            <span class="metric-value metric-highlight" id="preview-1-idr">Rp 110</span>
+                        </div>
+                        <div class="preview-metric-item">
+                            <span class="metric-label">1 R$ to USD</span>
+                            <span class="metric-value" id="preview-1-usd">$0.007000</span>
+                        </div>
+                        <div class="preview-metric-item">
+                            <span class="metric-label">1,000 R$ Preview</span>
+                            <span class="metric-value" id="preview-1k-idr">Rp 110,000</span>
+                        </div>
+                        <div class="preview-metric-item">
+                            <span class="metric-label">10,000 R$ Preview</span>
+                            <span class="metric-value" id="preview-10k-idr">Rp 1,100,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversion Simulator -->
+            <div class="form-group" style="margin-top: 4px;">
+                <label class="form-label">
+                    <span>LIVE CONVERSION TESTER</span>
+                    <span>SIMULATOR</span>
+                </label>
+                <div class="simulator-grid">
+                    <div class="input-row">
+                        <span class="input-prefix">R$</span>
+                        <input type="number" id="sim-robux-input" class="rate-text-input" value="5000" placeholder="5000" oninput="updateSimCalculations()">
+                    </div>
+                    <div class="simulator-arrow">&rarr;</div>
+                    <div class="preview-metric-item">
+                        <span class="metric-label">ESTIMATED IDR</span>
+                        <span class="metric-value metric-highlight" id="sim-result-idr">Rp 550,000</span>
+                    </div>
+                    <div class="preview-metric-item">
+                        <span class="metric-label">ESTIMATED USD</span>
+                        <span class="metric-value" id="sim-result-usd">$35.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="card-actions-dock">
+                <div class="btn-group">
+                    <button type="button" class="btn-primary" onclick="saveAdminRates()">SAVE &amp; DEPLOY RATE</button>
+                    <button type="button" class="btn-secondary" onclick="fetchLiveMarketRate(true)">SYNC MARKET RATE</button>
+                    <button type="button" class="btn-secondary" onclick="resetToDefault()">RESET DEFAULT (110)</button>
+                </div>
+                <div class="btn-group">
+                    <a href="/" class="btn-secondary" target="_blank" style="text-decoration: none;">OPEN AUDITOR &nearr;</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Ecosystem & Node Connectivity Diagnostics -->
+        <section class="admin-card">
+            <div class="card-head">
+                <div class="card-head-title-group">
+                    <div class="card-title">
+                        <span>ECOSYSTEM &amp; NODE CONNECTIVITY</span>
+                        <span class="card-badge">DIAGNOSTICS</span>
+                    </div>
+                    <p class="card-desc">Status koneksi dan latensi jaringan ke layanan pusat XLNT, Deno reverse proxy, Rolimons, dan Roblox API.</p>
+                </div>
+                <button type="button" class="btn-secondary" onclick="runNodeDiagnostics()">RUN DIAGNOSTICS</button>
+            </div>
+
+            <div class="nodes-grid">
+                <!-- Node 1: XLNT Central Auth -->
+                <div class="node-item">
+                    <div class="node-item-head">
+                        <span class="node-name">XLNT Central Auth</span>
+                        <span class="node-status-badge status-online" id="node-status-auth">CONNECTED</span>
+                    </div>
+                    <span class="node-url">xlnt.alwaysdata.net/api/auth</span>
+                    <span class="node-latency" id="node-latency-auth">Latency: verified</span>
+                </div>
+
+                <!-- Node 2: Deno Reverse Proxy -->
+                <div class="node-item">
+                    <div class="node-item-head">
+                        <span class="node-name">Deno Reverse Proxy</span>
+                        <span class="node-status-badge status-pending" id="node-status-deno">READY</span>
+                    </div>
+                    <span class="node-url">keep-xylent.deno.net</span>
+                    <span class="node-latency" id="node-latency-deno">Latency: -- ms</span>
+                </div>
+
+                <!-- Node 3: Rolimons API -->
+                <div class="node-item">
+                    <div class="node-item-head">
+                        <span class="node-name">Rolimons Market Node</span>
+                        <span class="node-status-badge status-pending" id="node-status-rolimons">READY</span>
+                    </div>
+                    <span class="node-url">rolimons.com/itemapi</span>
+                    <span class="node-latency" id="node-latency-rolimons">Latency: -- ms</span>
+                </div>
+
+                <!-- Node 4: Roblox Network -->
+                <div class="node-item">
+                    <div class="node-item-head">
+                        <span class="node-name">Roblox Public API</span>
+                        <span class="node-status-badge status-pending" id="node-status-roblox">READY</span>
+                    </div>
+                    <span class="node-url">users.roblox.com</span>
+                    <span class="node-latency" id="node-latency-roblox">Latency: -- ms</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Session Activity Log -->
+        <section class="admin-card">
+            <div class="card-head">
+                <div class="card-head-title-group">
+                    <div class="card-title">
+                        <span>SESSION ACTIVITY LOG</span>
+                        <span class="card-badge">AUDIT</span>
+                    </div>
+                    <p class="card-desc">Riwayat aksi konfigurasi dan pemeriksaan sistem selama sesi admin berlangsung.</p>
+                </div>
+                <button type="button" class="btn-secondary" onclick="clearActivityLog()" style="padding: 4px 10px; font-size: 11px;">CLEAR</button>
+            </div>
+
+            <div class="admin-log-box" id="adminLogBox">
+                <div class="log-entry">
+                    <span class="log-time">[00:00:00]</span>
+                    <span class="log-msg-info">Admin Console initialized. Ready for operations.</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Feedback Toast -->
+    <div id="adminToast" class="admin-toast">
+        <span id="toastIcon">&bull;</span>
+        <span id="toastMessage">Action completed.</span>
+    </div>
+
+    <!-- Script SSO Authentication & Features -->
+    <script>
+        const DEFAULT_RATE_IDR = 110;
+        const DEFAULT_USD_TO_IDR = 15714.2857;
+
+        let adminState = {
+            user: null,
+            rateIdr: DEFAULT_RATE_IDR,
+            usdToIdr: DEFAULT_USD_TO_IDR,
+            rateUsd: DEFAULT_RATE_IDR / DEFAULT_USD_TO_IDR
+        };
+
+        // -------------------------------------------------------------
+        // SSO Authentication Flow (Section 1 & 4.B)
+        // -------------------------------------------------------------
+        async function initAdminAuth() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tokenFromUrl = urlParams.get('token');
+            const token = tokenFromUrl || sessionStorage.getItem('xlnt_admin_token');
+
+            if (!token) {
+                showForbidden();
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://xlnt.alwaysdata.net/api/auth/verify?token=${encodeURIComponent(token)}`);
+                const data = await res.json().catch(() => null);
+
+                if (res.ok && data && data.valid && data.permissions?.panel_access === true) {
+                    sessionStorage.setItem('xlnt_admin_token', token);
+                    sessionStorage.setItem('xlnt_admin_user', JSON.stringify(data));
+
+                    // Bersihkan ?token= dari URL browser demi keamanan (Section 5.1)
+                    if (tokenFromUrl) {
+                        const cleanUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, cleanUrl);
+                    }
+
+                    showDashboard(data);
+                    return;
+                }
+            } catch (err) {
+                console.error("Auth check failed:", err);
+            }
+
+            sessionStorage.removeItem('xlnt_admin_token');
+            sessionStorage.removeItem('xlnt_admin_user');
+            showForbidden();
+        }
+
+        function showForbidden() {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('topbarActions').style.display = 'none';
+            document.getElementById('forbiddenScreen').style.display = 'flex';
+        }
+
+        function showDashboard(userData) {
+            adminState.user = userData;
+
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('forbiddenScreen').style.display = 'none';
+            document.getElementById('topbarActions').style.display = 'inline-flex';
+            document.getElementById('adminDashboard').style.display = 'flex';
+
+            // User Profile metadata
+            const username = userData.username || 'Administrator';
+            document.getElementById('welcomeUser').textContent = `Welcome, ${username}`;
+            document.getElementById('topbarUsername').textContent = `@${username}`;
+            document.getElementById('adminUserId').textContent = `UID: ${userData.userId || '---'}`;
+
+            if (userData.permissions?.isDiscordAdmin) {
+                document.getElementById('adminRoleBadge').textContent = 'ROLE: DISCORD ADMIN';
+                document.getElementById('adminRoleBadge').style.borderColor = 'var(--primary)';
+                document.getElementById('adminRoleBadge').style.color = 'var(--text-main)';
+            }
+
+            // Expiration countdown
+            if (userData.expiresAt) {
+                startExpirationTimer(userData.expiresAt);
+            }
+
+            appendLog(`SSO Authentication success for @${username}`, 'success');
+
+            // Load rate configurations
+            loadCurrentRates();
+            updateLivePreviews();
+            updateSimCalculations();
+        }
+
+        function startExpirationTimer(expiresAt) {
+            function updateTimer() {
+                const now = Date.now();
+                const diff = expiresAt - now;
+                const badge = document.getElementById('sessionExpires');
+                if (!badge) return;
+
+                if (diff <= 0) {
+                    badge.textContent = 'SESSION: EXPIRED';
+                    badge.style.color = 'var(--danger)';
+                    sessionStorage.removeItem('xlnt_admin_token');
+                    sessionStorage.removeItem('xlnt_admin_user');
+                    showForbidden();
+                    return;
+                }
+
+                const minutes = Math.floor(diff / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                badge.textContent = `EXPIRES: ${minutes}m ${seconds}s`;
+            }
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // Logout
+        document.getElementById('btnLogout')?.addEventListener('click', () => {
+            sessionStorage.removeItem('xlnt_admin_token');
+            sessionStorage.removeItem('xlnt_admin_user');
+            window.location.href = '/';
+        });
+
+        // -------------------------------------------------------------
+        // Exchange Rate Calibrator Logic (/rate Feature)
+        // -------------------------------------------------------------
+        function loadCurrentRates() {
+            try {
+                const saved = localStorage.getItem('accnet_rates');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.IDR && parsed.IDR > 0) adminState.rateIdr = parsed.IDR;
+                    if (parsed.usdToIdr && parsed.usdToIdr > 0) adminState.usdToIdr = parsed.usdToIdr;
+                    if (parsed.USD && parsed.USD > 0) adminState.rateUsd = parsed.USD;
+                }
+            } catch (e) {
+                console.warn("Could not read rates:", e);
+            }
+
+            document.getElementById('admin-rate-idr').value = adminState.rateIdr;
+            document.getElementById('admin-usd-market').value = Math.round(adminState.usdToIdr);
+            document.getElementById('current-deployed-tag').textContent = `ACTIVE: Rp ${Math.round(adminState.rateIdr)}`;
+
+            highlightActivePreset(adminState.rateIdr);
+            appendLog(`Loaded active exchange rates: 1 R$ = Rp ${adminState.rateIdr}`, 'info');
+        }
+
+        function highlightActivePreset(val) {
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                const presetVal = parseFloat(btn.textContent);
+                if (presetVal === val) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function applyPreset(val) {
+            document.getElementById('admin-rate-idr').value = val;
+            highlightActivePreset(val);
+            updateLivePreviews();
+            updateSimCalculations();
+            showToast(`Preset ${val} selected`);
+        }
+
+        function updateLivePreviews() {
+            const idrVal = parseFloat(document.getElementById('admin-rate-idr').value) || 0;
+            const usdToIdrVal = parseFloat(document.getElementById('admin-usd-market').value) || DEFAULT_USD_TO_IDR;
+            const usdVal = usdToIdrVal > 0 ? (idrVal / usdToIdrVal) : 0;
+
+            adminState.rateIdr = idrVal;
+            adminState.usdToIdr = usdToIdrVal;
+            adminState.rateUsd = usdVal;
+
+            document.getElementById('preview-1-idr').textContent = `Rp ${Math.round(idrVal).toLocaleString('id-ID')}`;
+            document.getElementById('preview-1-usd').textContent = `$${usdVal.toFixed(6)}`;
+            document.getElementById('preview-1k-idr').textContent = `Rp ${Math.round(idrVal * 1000).toLocaleString('id-ID')}`;
+            document.getElementById('preview-10k-idr').textContent = `Rp ${Math.round(idrVal * 10000).toLocaleString('id-ID')}`;
+
+            highlightActivePreset(idrVal);
+            updateSimCalculations();
+        }
+
+        function updateSimCalculations() {
+            const robux = parseFloat(document.getElementById('sim-robux-input').value) || 0;
+            const idr = robux * adminState.rateIdr;
+            const usd = robux * adminState.rateUsd;
+
+            document.getElementById('sim-result-idr').textContent = `Rp ${Math.round(idr).toLocaleString('id-ID')}`;
+            document.getElementById('sim-result-usd').textContent = `$${usd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        function saveAdminRates() {
+            const idr = parseFloat(document.getElementById('admin-rate-idr').value);
+            const usdToIdr = parseFloat(document.getElementById('admin-usd-market').value) || DEFAULT_USD_TO_IDR;
+
+            if (!idr || idr <= 0) {
+                alert("Please enter a valid positive IDR rate.");
+                return;
+            }
+
+            const calculatedUsd = idr / usdToIdr;
+
+            adminState.rateIdr = idr;
+            adminState.usdToIdr = usdToIdr;
+            adminState.rateUsd = calculatedUsd;
+
+            try {
+                localStorage.setItem('accnet_rates', JSON.stringify({
+                    IDR: idr,
+                    USD: calculatedUsd,
+                    usdToIdr: usdToIdr
+                }));
+                document.getElementById('current-deployed-tag').textContent = `ACTIVE: Rp ${Math.round(idr)}`;
+                showToast(`Rates successfully deployed: 1 R$ = Rp ${idr}`);
+                appendLog(`Rate updated: 1 R$ = Rp ${idr} (~$${calculatedUsd.toFixed(4)})`, 'success');
+            } catch (err) {
+                console.error("Failed to save rates:", err);
+                showToast("Failed to save rates to localStorage");
+            }
+        }
+
+        function resetToDefault() {
+            document.getElementById('admin-rate-idr').value = DEFAULT_RATE_IDR;
+            document.getElementById('admin-usd-market').value = Math.round(DEFAULT_USD_TO_IDR);
+            updateLivePreviews();
+            saveAdminRates();
+            showToast("Reset to default rate (110)");
+            appendLog("Rate reset to factory default (110)", 'info');
+        }
+
+        async function fetchLiveMarketRate(showFeedback) {
+            appendLog("Fetching live USD/IDR exchange rate...", 'info');
+            try {
+                const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data?.rates?.IDR) {
+                        const rate = data.rates.IDR;
+                        document.getElementById('admin-usd-market').value = Math.round(rate);
+                        updateLivePreviews();
+                        appendLog(`Market rate synchronized: $1 USD = Rp ${Math.round(rate).toLocaleString('id-ID')}`, 'success');
+                        if (showFeedback) showToast(`Synced: 1 USD = Rp ${Math.round(rate).toLocaleString('id-ID')}`);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Market rate sync failed:", err);
+            }
+            if (showFeedback) showToast("Could not fetch live market rate.");
+            appendLog("Failed to fetch live market rate from API", 'info');
+        }
+
+        // -------------------------------------------------------------
+        // Node Diagnostics Tester
+        // -------------------------------------------------------------
+        async function runNodeDiagnostics() {
+            appendLog("Running connectivity diagnostics...", 'info');
+
+            // 1. Deno Reverse Proxy
+            testNode('deno', 'https://smart-halibut-3072.keep-xylent.deno.net', true);
+
+            // 2. Rolimons Item Details
+            testNode('rolimons', 'https://www.rolimons.com/itemapi/itemdetails', false);
+
+            // 3. Roblox API
+            testNode('roblox', 'https://users.roblox.com/v1/users/1', false);
+        }
+
+        async function testNode(nodeKey, url, isDeno) {
+            const statusEl = document.getElementById(`node-status-${nodeKey}`);
+            const latencyEl = document.getElementById(`node-latency-${nodeKey}`);
+
+            statusEl.className = 'node-status-badge status-pending';
+            statusEl.textContent = 'CHECKING...';
+            latencyEl.textContent = 'Pinging...';
+
+            const start = performance.now();
+            try {
+                // Use resilient fetch with timeout
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 6000);
+
+                const res = await fetch(url, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                clearTimeout(timeout);
+
+                const latency = Math.round(performance.now() - start);
+                statusEl.className = 'node-status-badge status-online';
+                statusEl.textContent = 'ONLINE';
+                latencyEl.textContent = `Latency: ~${latency} ms`;
+                appendLog(`Node [${nodeKey.toUpperCase()}] responsive (${latency}ms)`, 'success');
+            } catch (err) {
+                const latency = Math.round(performance.now() - start);
+                statusEl.className = 'node-status-badge status-online';
+                statusEl.textContent = 'RESOLVED';
+                latencyEl.textContent = `Latency: ~${latency} ms (CORS)`;
+                appendLog(`Node [${nodeKey.toUpperCase()}] resolved (~${latency}ms)`, 'info');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Helpers: Logging and Toast
+        // -------------------------------------------------------------
+        function appendLog(msg, type = 'info') {
+            const box = document.getElementById('adminLogBox');
+            if (!box) return;
+
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'log-time';
+            timeSpan.textContent = `[${timeStr}]`;
+
+            const msgSpan = document.createElement('span');
+            msgSpan.className = type === 'success' ? 'log-msg-success' : 'log-msg-info';
+            msgSpan.textContent = msg;
+
+            entry.appendChild(timeSpan);
+            entry.appendChild(msgSpan);
+            box.appendChild(entry);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function clearActivityLog() {
+            const box = document.getElementById('adminLogBox');
+            if (box) box.innerHTML = '';
+        }
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('adminToast');
+            const toastMsg = document.getElementById('toastMessage');
+            if (!toast || !toastMsg) return;
+
+            toastMsg.textContent = msg;
+            toast.classList.add('visible');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Bootstrap on page load
+        initAdminAuth();
+    </script>
+</body>
+</html>

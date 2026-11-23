@@ -101,7 +101,7 @@
                             <div class="avatar-frame">
                                 <div class="avatar-crosshair-tl"></div>
                                 <div class="avatar-crosshair-br"></div>
-                                <img id="user-avatar" class="avatar" src="" alt="Subject Avatar">
+                                <img id="user-avatar" class="avatar" src="" alt="Subject Avatar" onerror="handleImgFallback(this)">
                             </div>
                             <div class="identity-meta">
                                 <h2 id="display-name" class="display-name">---</h2>
@@ -309,7 +309,7 @@
                     <div class="item-hero-card-left">
                         <div class="item-card-thumb-area">
                             <div class="item-modal-grid-decor"></div>
-                            <img id="item-modal-thumb" src="/favicon.svg" alt="Item preview" class="item-modal-thumb">
+                            <img id="item-modal-thumb" src="/favicon.svg" alt="Item preview" class="item-modal-thumb" onerror="handleImgFallback(this)">
                             <div id="item-modal-tags" class="item-modal-tags-overlay"></div>
                         </div>
                         <div class="item-card-name-area">
@@ -460,6 +460,7 @@
                     <span>by xlnt.</span>
                 </div>
                 <div class="watermark-links">
+                    <a href="/admin" class="watermark-link">ADMIN</a>
                     <a href="https://github.com/maddoxbouldin/Rolimons-API" target="_blank" rel="noopener noreferrer"
                         class="watermark-link">ROLIMONS API</a>
                     <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer"
@@ -577,7 +578,13 @@
             // Special command: /rate opens the calibration dialog
             if (username.toLowerCase() === '/rate') {
                 document.getElementById('username').value = '';
-                openRateModal();
+                const token = sessionStorage.getItem('xlnt_admin_token');
+                const adminUser = sessionStorage.getItem('xlnt_admin_user');
+                if (token && adminUser) {
+                    openRateModal();
+                } else {
+                    window.location.href = '/admin';
+                }
                 return;
             }
 
@@ -759,7 +766,7 @@
                             ${tagHtml}
                             ${serialHtml}
                         </div>
-                        <img src="${item.image || '/favicon.svg'}" class="item-thumb" alt="${item.name}" loading="lazy">
+                        <img src="${item.image || '/favicon.svg'}" class="item-thumb" alt="${item.name}" loading="lazy" onerror="handleImgFallback(this)">
                         <span class="demand-tag demand-${(item.demand || 'unknown').toLowerCase()}">${item.demand || 'UNKNOWN'}</span>
                     </div>
                     <div class="item-name" title="${item.name}">${item.name}</div>
@@ -2078,6 +2085,19 @@
             }).catch(() => {
                 showRateToast('ID: ' + rawId);
             });
+        }
+
+        // Standard Image Fallback Helper (XLNT Ecosystem Guide)
+        function handleImgFallback(img) {
+            if (!img || img.dataset.fallbackApplied) return;
+            img.dataset.fallbackApplied = 'true';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'img-fallback-box';
+            wrapper.setAttribute('role', 'img');
+            wrapper.setAttribute('aria-label', 'Image unavailable');
+            wrapper.setAttribute('title', 'Image unavailable');
+            wrapper.innerHTML = `<svg class="img-fallback-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" y1="2" x2="22" y2="22" /><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83" /><line x1="13.5" y1="13.5" x2="6" y2="21" /><line x1="18" y1="12" x2="21" y2="15" /><path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59" /><path d="M21 15V5a2 2 0 0 0-2-2H9" /></svg>`;
+            img.replaceWith(wrapper);
         }
 
         // Toast Helper
